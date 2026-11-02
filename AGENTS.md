@@ -10,7 +10,7 @@ This repository contains compiled Android camera APK/XAPK binaries, **not** sour
 | `oneplus.apk` | 5.5 KB | Stub (not the camera app) |
 | `vivo-camera-12.1.15.602.apk` | ~201 MB | Vivo camera app — **decompiled** |
 | `vivo-13.5.8.0.apk` | ~189 MB | Vivo camera app — **decompiled** |
-| `vivo.apk` | ~293 MB | Camera app — decompiling in background |
+| `vivo.apk` | ~293 MB | Vivo camera app — **decompiled** (14,691 classes) |
 | `xiaomi.apk` | ~199 MB | Xiaomi camera app — **decompiled** (22,140 Java files) |
 | `phocus-mobile-1.1.0.xapk` | ~178 MB | Xiaomi/Phocus camera bundle — not yet decompiled |
 | `phocus.xapk` | 5.5 KB | Stub |
