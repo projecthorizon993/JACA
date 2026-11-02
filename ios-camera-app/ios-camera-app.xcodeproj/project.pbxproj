@@ -717,7 +717,7 @@
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>YES</string>
 					<key>INFOPLIST_FILE</key>
-					<string>ios-camera-app/Info.plist</string>
+					<string>Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
@@ -781,7 +781,7 @@
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>YES</string>
 					<key>INFOPLIST_FILE</key>
-					<string>ios-camera-app/Info.plist</string>
+					<string>Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
