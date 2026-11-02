@@ -467,8 +467,6 @@
 				<key>buildPhases</key>
 				<array>
 					<string>BS1</string>
-					<string>BS2</string>
-					<string>BS3</string>
 				</array>
 				<key>buildRules</key>
 				<array/>
