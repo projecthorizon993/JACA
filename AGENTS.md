@@ -137,7 +137,22 @@ ios-camera-app/
 - `CISharpenLuminance` for sharpness
 - Film grain from `film_grain_small.bin`
 
+**LUT Assets** (extracted from APKs, in `Assets.xcassets/LUTs.lutcollection/`):
+| LUT | Source APK | Asset |
+|---|---|---|
+| `lut_all_points` | oneplus-camera-3.102.28.apk | `assets/filters_res/lut_all_points.png` |
+| `cartoon1_lut` | vivo-camera-12.1.15.602.apk | `assets/cartoon1/cartoon1_lut.png` |
+| `dv_record_lut` | vivo-camera-12.1.15.602.apk | `assets/DVFilter/DVRecordLut.png` |
+| `dv_screen_lut` | vivo-camera-12.1.15.602.apk | `assets/DVFilter/DVScreenLut.png` |
+| `aifilter_beach` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_beach.png` |
+| `aifilter_cyberpunk` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_cyberpunk.png` |
+| `aifilter_night` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_night.png` |
+| `aifilter_portrait` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_portrait.png` |
+| `aifilter_sunset` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_sunset.png` |
+
 **Histogram**: 48-bin luminance histogram computed per frame from `AVCaptureVideoDataOutput`
+
+**LUT Pipeline**: `RealCameraEngine` applies `FilterPipeline` (CIColorCube LUT) to each `AVCaptureVideoDataOutput` frame and dispatches the filtered `UIImage` to the main thread via `onFilteredFrame` callback.
 
 **Overlays**: `CALayer` / `UIImage` for stickers and vignettes
 **Fonts**: Gotham-Bold, Gilroy for UI text

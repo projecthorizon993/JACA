@@ -8,14 +8,27 @@
 
 import UIKit
 import SwiftUI
+import AVFoundation
+import CoreImage
 
 class CameraViewController: UIViewController {
 
     private var hostingController: UIHostingController<CameraScreen>?
     private let cameraEngine = RealCameraEngine()
+    private let filterPipeline = FilterPipeline()
+
+    // MARK: - UI
+
+    private let filteredPreviewView = UIImageView()
+    private let lutSegmentedControl = UISegmentedControl()
+
+    // MARK: - State
+
+    private var currentLUTIndex: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
         setupSwiftUICamera()
     }
 
@@ -29,9 +42,50 @@ class CameraViewController: UIViewController {
         cameraEngine.stop()
     }
 
+    // MARK: - Setup
+
+    private func setupUI() {
+        view.backgroundColor = .black
+
+        // Filtered preview — shows camera frames with LUT applied
+        filteredPreviewView.translatesAutoresizingMaskIntoConstraints = false
+        filteredPreviewView.contentMode = .scaleAspectFill
+        filteredPreviewView.clipsToBounds = true
+        filteredPreviewView.backgroundColor = .black
+        view.addSubview(filteredPreviewView)
+
+        // LUT filter selector
+        lutSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        lutSegmentedControl.insertSegment(withTitle: "None", at: 0, animated: false)
+        for (index, name) in LUTManager.availableLUTs.enumerated() {
+            let displayName = name.replacingOccurrences(of: "_", with: " ").capitalized
+            lutSegmentedControl.insertSegment(withTitle: displayName, at: index + 1, animated: false)
+        }
+        lutSegmentedControl.selectedSegmentIndex = 0
+        lutSegmentedControl.addTarget(self, action: #selector(lutChanged(_:)), for: .valueChanged)
+        view.addSubview(lutSegmentedControl)
+
+        NSLayoutConstraint.activate([
+            filteredPreviewView.topAnchor.constraint(equalTo: view.topAnchor),
+            filteredPreviewView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            filteredPreviewView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            filteredPreviewView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+
+            lutSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            lutSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            lutSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            lutSegmentedControl.heightAnchor.constraint(equalToConstant: 32)
+        ])
+    }
+
     private func setupSwiftUICamera() {
         let screen = CameraScreen { PlaceholderScene() }
         screen.model.cameraEngine = cameraEngine
+
+        // Wire filtered frame callback — displays LUT-applied preview
+        cameraEngine.onFilteredFrame = { [weak self] image in
+            self?.filteredPreviewView.image = image
+        }
 
         let hosting = UIHostingController(rootView: screen)
         hosting.view.translatesAutoresizingMaskIntoConstraints = false
@@ -49,6 +103,24 @@ class CameraViewController: UIViewController {
         ])
 
         hostingController = hosting
+    }
+
+    // MARK: - LUT filter selection
+
+    @objc private func lutChanged(_ sender: UISegmentedControl) {
+        currentLUTIndex = sender.selectedSegmentIndex
+
+        if currentLUTIndex == 0 {
+            // "None" — no LUT
+            cameraEngine.currentLUT = nil
+            cameraEngine.currentFilterType = 0
+        } else {
+            let lutIndex = currentLUTIndex - 1
+            let lutName = LUTManager.availableLUTs[lutIndex]
+            cameraEngine.currentLUT = LUTManager.loadLUT(named: lutName)
+            cameraEngine.currentFilterType = 1 // LUT-based filter
+        }
+        cameraEngine.currentLUTIntensity = 1.0
     }
 }
 

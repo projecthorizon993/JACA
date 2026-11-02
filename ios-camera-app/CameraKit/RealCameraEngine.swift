@@ -33,6 +33,16 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
     private let filterPipeline = FilterPipeline()
 
+    // MARK: - Frame callback for filtered preview
+
+    /// Called on main thread with each filtered frame (LUT applied).
+    var onFilteredFrame: ((UIImage) -> Void)?
+
+    /// Current LUT settings applied to the preview pipeline.
+    var currentLUT: CGImage? = nil
+    var currentLUTIntensity: Float = 1.0
+    var currentFilterType: Int = 0
+
     // MARK: - Initialization
 
     override init() {
@@ -190,6 +200,19 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         // Compute 48-bin histogram from luminance
         computeHistogram(from: pixelBuffer)
+
+        // Apply LUT filter pipeline and dispatch filtered frame to main thread
+        let settings = FilterSettings(
+            lut: currentLUT,
+            intensity: currentLUTIntensity,
+            type: currentFilterType,
+            color: ColorAdjustment()
+        )
+        let filtered = filterPipeline.apply(to: pixelBuffer, settings: settings)
+
+        DispatchQueue.main.async { [weak self] in
+            self?.onFilteredFrame?(filtered)
+        }
     }
 
     private func computeHistogram(from pixelBuffer: CVPixelBuffer) {

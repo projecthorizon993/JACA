@@ -2,9 +2,19 @@
 //  LUTManager.swift
 //  ios-camera-app
 //
-//  Loads LUT textures extracted from decompiled Android camera APKs.
-//  Source assets: lut_all_points.png, filter_*.png, new_filter_*.png, lut1.png.bin, daily_lut.png.bin
-//  Staged at: C:\Users\Admin\AppData\Local\Temp\opencode\ios-camera-assets\lut\
+//  Loads LUT textures extracted from decompiled Android camera APKs
+//  (OnePlus, Vivo). LUTs are stored in Assets.xcassets/LUTs.lutcollection/.
+//
+//  Source assets:
+//    - lut_all_points.png          (OnePlus filters_res)
+//    - cartoon1_lut.png            (Vivo cartoon1)
+//    - dv_record_lut.png           (Vivo DVFilter)
+//    - dv_screen_lut.png           (Vivo DVFilter)
+//    - aifilter_beach.png          (Vivo aifilter)
+//    - aifilter_cyberpunk.png      (Vivo aifilter)
+//    - aifilter_night.png          (Vivo aifilter)
+//    - aifilter_portrait.png       (Vivo aifilter)
+//    - aifilter_sunset.png         (Vivo aifilter)
 //
 
 import UIKit
@@ -14,7 +24,20 @@ class LUTManager {
 
     private static var lutCache: [String: CGImage] = [:]
 
-    /// Load a LUT PNG from the app bundle. The asset must be added to Assets.xcassets.
+    /// All LUT names available in Assets.xcassets/LUTs.lutcollection/
+    static let availableLUTs: [String] = [
+        "lut_all_points",
+        "cartoon1_lut",
+        "dv_record_lut",
+        "dv_screen_lut",
+        "aifilter_beach",
+        "aifilter_cyberpunk",
+        "aifilter_night",
+        "aifilter_portrait",
+        "aifilter_sunset"
+    ]
+
+    /// Load a LUT PNG from the app bundle asset catalog.
     /// Returns nil if not found — caller should fall back to CIColorControls.
     static func loadLUT(named name: String) -> CGImage? {
         if let cached = lutCache[name] {
@@ -33,22 +56,7 @@ class LUTManager {
 
     /// Preload all LUTs at launch so filter switching is instant.
     static func preloadAll() {
-        let names = [
-            "lut_all_points",
-            "filter_classic_film",
-            "filter_greenland",
-            "filter_retro_film",
-            "filter_rosa",
-            "new_filter_blackcurrant",
-            "new_filter_cyberpunk",
-            "new_filter_equanimity",
-            "filter_night_style_cyberpunk",
-            "filter_night_style_dream_light",
-            "filter_night_style_blue_ice",
-            "lut1",
-            "daily_lut"
-        ]
-        for name in names {
+        for name in availableLUTs {
             _ = loadLUT(named: name)
         }
     }
