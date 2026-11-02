@@ -710,7 +710,7 @@
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>NO</string>
 					<key>INFOPLIST_FILE</key>
-					<string>Info.plist</string>
+					<string>../Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MARKETING_VERSION</key>
@@ -766,7 +766,7 @@
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>NO</string>
 					<key>INFOPLIST_FILE</key>
-					<string>Info.plist</string>
+					<string>../Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MARKETING_VERSION</key>
