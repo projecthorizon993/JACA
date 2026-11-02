@@ -39,5 +39,9 @@
 	<string>This app needs camera access to take photos and apply real-time filters.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs microphone access for video recording.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to save captured photos and videos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location access to geotag captured photos and videos.</string>
 </dict>
 </plist>

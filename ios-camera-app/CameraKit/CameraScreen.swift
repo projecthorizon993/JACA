@@ -16,7 +16,10 @@ struct CameraScreen<Viewfinder: View>: View {
             Color.clear.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                TopBar(bracket: model.bracket, flashOn: $model.flashOn)
+                TopBar(bracket: model.bracket, flashMode: $model.flashMode)
+                    .onChange(of: model.flashMode) { _, newMode in
+                        model.cameraEngine?.setFlashMode(newMode)
+                    }
 
                 // Viewfinder area — transparent, filtered frames show from behind
                 ZStack(alignment: .top) {

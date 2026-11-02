@@ -30,6 +30,9 @@ class CameraViewController: UIViewController {
     private let watermarkScaleSlider = UISlider()
     private let watermarkToggle = UISwitch()
     private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
+    private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
+    private let flipButton = UIButton(type: .system)
+    private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
     // MARK: - State
 
@@ -110,6 +113,25 @@ class CameraViewController: UIViewController {
         leicaColorControl.addTarget(self, action: #selector(leicaColorChanged(_:)), for: .valueChanged)
         view.addSubview(leicaColorControl)
 
+        // White balance selector
+        whiteBalanceControl.translatesAutoresizingMaskIntoConstraints = false
+        whiteBalanceControl.selectedSegmentIndex = WhiteBalanceMode.allCases.firstIndex(of: screen.model.whiteBalanceMode) ?? 0
+        whiteBalanceControl.addTarget(self, action: #selector(whiteBalanceChanged(_:)), for: .valueChanged)
+        view.addSubview(whiteBalanceControl)
+
+        // Flip camera button
+        flipButton.translatesAutoresizingMaskIntoConstraints = false
+        flipButton.setImage(UIImage(systemName: "camera.rotate"), for: .normal)
+        flipButton.tintColor = .white
+        flipButton.addTarget(self, action: #selector(flipCamera(_:)), for: .touchUpInside)
+        view.addSubview(flipButton)
+
+        // Camera mode selector (Photo/Video/Pro)
+        cameraModeControl.translatesAutoresizingMaskIntoConstraints = false
+        cameraModeControl.selectedSegmentIndex = CameraMode.allCases.firstIndex(of: screen.model.cameraMode) ?? 0
+        cameraModeControl.addTarget(self, action: #selector(cameraModeChanged(_:)), for: .valueChanged)
+        view.addSubview(cameraModeControl)
+
         // Watermark position selector
         watermarkPositionControl.translatesAutoresizingMaskIntoConstraints = false
         watermarkPositionControl.selectedSegmentIndex = 1 // Bottom Right
@@ -163,7 +185,22 @@ class CameraViewController: UIViewController {
             leicaColorControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             leicaColorControl.heightAnchor.constraint(equalToConstant: 32),
 
-            watermarkPositionControl.topAnchor.constraint(equalTo: leicaColorControl.bottomAnchor, constant: 6),
+            whiteBalanceControl.topAnchor.constraint(equalTo: leicaColorControl.bottomAnchor, constant: 6),
+            whiteBalanceControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            whiteBalanceControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            whiteBalanceControl.heightAnchor.constraint(equalToConstant: 32),
+
+            flipButton.topAnchor.constraint(equalTo: whiteBalanceControl.bottomAnchor, constant: 6),
+            flipButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            flipButton.widthAnchor.constraint(equalToConstant: 32),
+            flipButton.heightAnchor.constraint(equalToConstant: 32),
+
+            cameraModeControl.topAnchor.constraint(equalTo: flipButton.bottomAnchor, constant: 6),
+            cameraModeControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            cameraModeControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            cameraModeControl.heightAnchor.constraint(equalToConstant: 32),
+
+            watermarkPositionControl.topAnchor.constraint(equalTo: cameraModeControl.bottomAnchor, constant: 6),
             watermarkPositionControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             watermarkPositionControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             watermarkPositionControl.heightAnchor.constraint(equalToConstant: 30),
@@ -258,6 +295,22 @@ class CameraViewController: UIViewController {
         let profiles = LeicaColorProfile.allCases
         screen.model.leicaColorProfile = profiles[sender.selectedSegmentIndex]
         cameraEngine.currentLeicaProfile = profiles[sender.selectedSegmentIndex]
+    }
+
+    @objc private func whiteBalanceChanged(_ sender: UISegmentedControl) {
+        let modes = WhiteBalanceMode.allCases
+        let mode = modes[sender.selectedSegmentIndex]
+        screen.model.whiteBalanceMode = mode
+        cameraEngine.applyWhiteBalance(mode)
+    }
+
+    @objc private func flipCamera(_ sender: UIButton) {
+        cameraEngine.switchCamera()
+    }
+
+    @objc private func cameraModeChanged(_ sender: UISegmentedControl) {
+        let modes = CameraMode.allCases
+        screen.model.cameraMode = modes[sender.selectedSegmentIndex]
     }
 
     @objc private func watermarkPositionChanged(_ sender: UISegmentedControl) {

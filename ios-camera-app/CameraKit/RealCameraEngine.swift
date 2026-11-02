@@ -11,6 +11,7 @@ import SwiftUI
 import AVFoundation
 import CoreImage
 import CoreVideo
+import CoreLocation
 import Photos
 
 /// Real camera engine backing CameraKit. Implements CameraEngine using AVFoundation.
@@ -26,6 +27,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var videoOutput: AVCaptureVideoDataOutput?
     private var movieFileOutput: AVCaptureMovieFileOutput?
     private var captureDevice: AVCaptureDevice?
+    private let locationManager = CLLocationManager()
 
     // MARK: - Video recording
 
@@ -114,6 +116,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
 
         session.commitConfiguration()
+
+        // Request location permission for geotagging
+        locationManager.requestWhenInUseAuthorization()
     }
 
     /// Start video recording to a temporary file. Returns the output URL.
@@ -211,6 +216,84 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             device.unlockForConfiguration()
         } catch {
             print("Failed to set zoom: \(error)")
+        }
+    }
+
+    func applyWhiteBalance(_ mode: CameraModel.WhiteBalanceMode) {
+        guard let device = captureDevice else { return }
+        do {
+            try device.lockForConfiguration()
+            if device.isWhiteBalanceModeLockedSupported {
+                device.whiteBalanceMode = .locked
+                device.setWhiteBalanceModeLocked(withDeviceWhiteBalanceGains: AVCaptureDevice.WhiteBalanceGains(
+                    redGain: 1.0, greenGain: 1.0, blueGain: 1.0
+                )) { _ in }
+            } else {
+                device.whiteBalanceMode = .autoWhiteBalance
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Failed to apply white balance: \(error)")
+        }
+    }
+
+    func switchCamera() {
+        session.beginConfiguration()
+
+        // Remove existing input
+        if let input = videoDeviceInput {
+            session.removeInput(input)
+        }
+
+        // Determine new position from current device
+        let currentPos = captureDevice?.position ?? .back
+        let newPosition: AVCaptureDevice.Position = (currentPos == .back) ? .front : .back
+
+        // Add new input from opposite camera
+        guard let newDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: newPosition),
+              let newInput = try? AVCaptureDeviceInput(device: newDevice) else {
+            // Re-add original input if switch fails
+            if let input = videoDeviceInput {
+                session.addInput(input)
+            }
+            session.commitConfiguration()
+            return
+        }
+
+        if session.canAddInput(newInput) {
+            session.addInput(newInput)
+            videoDeviceInput = newInput
+            captureDevice = newDevice
+        } else {
+            // Re-add original input if switch fails
+            if let input = videoDeviceInput {
+                session.addInput(input)
+            }
+        }
+
+        session.commitConfiguration()
+    }
+
+    func setFlashMode(_ mode: CameraModel.FlashMode) {
+        guard let device = captureDevice else { return }
+        do {
+            try device.lockForConfiguration()
+            switch mode {
+            case .off:
+                device.torchMode = .off
+                device.flashMode = .off
+            case .on:
+                if device.isTorchModeSupported(.on) {
+                    device.torchMode = .on
+                }
+                device.flashMode = .on
+            case .auto:
+                device.torchMode = .auto
+                device.flashMode = .auto
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Failed to set flash mode: \(error)")
         }
     }
 

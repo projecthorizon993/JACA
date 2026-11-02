@@ -206,7 +206,7 @@ struct ThumbnailButton: View {
 
 struct TopBar: View {
     var bracket: String?          // e.g. "-1.0 | 0 | +1.0"; nil hides the badge
-    @Binding var flashOn: Bool
+    @Binding var flashMode: CameraModel.FlashMode
 
     var body: some View {
         HStack(alignment: .top) {
@@ -224,8 +224,17 @@ struct TopBar: View {
 
             Spacer()
 
-            RoundButton(symbol: flashOn ? "bolt.fill" : "bolt.slash", size: CKMetrics.compact,
-                        a11y: flashOn ? "Flash on" : "Flash off") { flashOn.toggle() }
+            let symbol: String
+            let a11y: String
+            switch flashMode {
+            case .off:   (symbol, a11y) = ("bolt.slash", "Flash off")
+            case .on:    (symbol, a11y) = ("bolt.fill", "Flash on")
+            case .auto:  (symbol, a11y) = ("bolt.badge.automatic", "Flash auto")
+            }
+            RoundButton(symbol: symbol, size: CKMetrics.compact,
+                        a11y: a11y) {
+                flashMode = flashMode.next
+            }
                 .foregroundStyle(CKColor.textSecondary)
                 .font(.system(size: 18, weight: .regular))
                 .background(.clear)

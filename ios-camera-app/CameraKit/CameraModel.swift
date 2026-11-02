@@ -14,6 +14,17 @@ final class CameraModel {
         var next: Zoom { self == .x1 ? .x2 : .x1 }
     }
 
+    enum CameraPosition: String, CaseIterable {
+        case back = "Back"
+        case front = "Front"
+        var avPosition: AVCaptureDevice.Position {
+            switch self {
+            case .back: return .back
+            case .front: return .front
+            }
+        }
+    }
+
     // Stops
     static let isoStops = [50, 64, 80, 100, 125, 160, 200, 250, 320, 400, 500, 640, 800, 1000, 1250, 1600, 2000, 2500, 3200]
     static let shutterStops = ["1/8000", "1/4000", "1/2000", "1/1000", "1/500", "1/250", "1/125", "1/60",
@@ -28,7 +39,10 @@ final class CameraModel {
     var focusIndex = 18
     var zoom: Zoom = .x1
     var rawOn = false
-    var flashOn = false
+    var flashMode: FlashMode = .off
+    var whiteBalanceMode: WhiteBalanceMode = .auto
+    var cameraPosition: CameraPosition = .back
+    var cameraMode: CameraMode = .photo
     var bracket: String? = nil            // "-1.0 | 0 | +1.0"
     var showGrid = true
     var showHistogram = false
@@ -103,6 +117,9 @@ protocol CameraEngine: AnyObject {
     func apply(isoIndex: Int, speedIndex: Int)
     func apply(focusDistance: Double?)                  // nil = continuous AF
     func setZoom(_ zoom: CameraModel.Zoom)
+    func applyWhiteBalance(_ mode: WhiteBalanceMode)
+    func setFlashMode(_ mode: FlashMode)
+    func switchCamera()                                 // toggles front/back camera
     func capture(raw: Bool, hevc: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image
 }
 
@@ -171,4 +188,38 @@ struct ProSettings {
     var focusDistance: Float = 0.0  // 0.0 to 1.0 (macro to infinity)
     var whiteBalance: Float = 5500.0  // Kelvin
     var exposureCompensation: Float = 0.0 // -4.0 to 4.0 EV
+}
+
+/// White balance mode for manual camera control
+enum WhiteBalanceMode: String, CaseIterable {
+    case auto = "Auto"
+    case daylight = "Daylight"
+    case cloudy = "Cloudy"
+    case tungsten = "Tungsten"
+    case fluorescent = "Fluorescent"
+    case flash = "Flash"
+    var kelvin: Float {
+        switch self {
+        case .auto: return 6500.0
+        case .daylight: return 5500.0
+        case .cloudy: return 6500.0
+        case .tungsten: return 3200.0
+        case .fluorescent: return 4000.0
+        case .flash: return 5500.0
+        }
+    }
+}
+
+/// Flash mode for manual camera control
+enum FlashMode: String, CaseIterable {
+    case off = "Off"
+    case on = "On"
+    case auto = "Auto"
+    var next: FlashMode {
+        switch self {
+        case .off: return .on
+        case .on: return .auto
+        case .auto: return .off
+        }
+    }
 }
