@@ -142,6 +142,7 @@ struct WatermarkSettings {
     var opacity: Float = 0.8
     var scale: Float = 0.15
     var isEnabled: Bool = false
+    var leicaProfile: LeicaColorProfile = .off
 }
 
 /// Filter settings for the filter pipeline

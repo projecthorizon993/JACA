@@ -15,26 +15,6 @@
 import UIKit
 import CoreImage
 
-/// Watermark style options ported from decompiled APKs
-enum WatermarkStyle: String, CaseIterable {
-    case off = "Off"
-    case leicaSignature = "Leica Signature"
-    case leicaLogo = "Leica Logo"
-    case xiaomiBrand = "Xiaomi Brand"
-    case pocoBrand = "POCO Brand"
-    case redmiBrand = "Redmi Brand"
-    case vivoTail = "Vivo Tail"
-    case shotOnIPhone = "Shot on iPhone"
-}
-
-enum WatermarkPosition: String, CaseIterable {
-    case bottomRight = "Bottom Right"
-    case bottomLeft = "Bottom Left"
-    case topRight = "Top Right"
-    case topLeft = "Top Left"
-    case center = "Center"
-}
-
 /// Manages loading and applying watermark overlays to camera frames.
 class WatermarkManager {
 
@@ -350,40 +330,6 @@ class WatermarkManager {
     }
 }
 
-/// Data model for watermark settings
-struct WatermarkSettings {
-    var style: WatermarkStyle = .off
-    var position: WatermarkPosition = .bottomRight
-    var opacity: Float = 0.8
-    var scale: Float = 0.15
-    var isEnabled: Bool = false
-    var leicaProfile: LeicaColorProfile = .off
-}
-
-/// Filter settings for the filter pipeline
-struct FilterSettings {
-    var lut: CGImage?
-    var intensity: Float = 1.0
-    var type: Int = 0  // filter segment index
-    var color: ColorAdjustment = ColorAdjustment()
-    var leicaProfile: LeicaColorProfile = .off
-}
-
-/// Color adjustment parameters
-struct ColorAdjustment {
-    var brightness: Float = 0.0    // -1.0 to 1.0
-    var contrast: Float = 1.0      // 0.0 to 2.0
-    var saturation: Float = 1.0    // 0.0 to 2.0
-    var temperature: Float = 6500.0 // 2000 to 10000 Kelvin
-    var tint: Float = 0.0          // -1.0 to 1.0 (green to magenta)
-    var sharpness: Float = 0.0     // 0.0 to 1.0
-}
-
-/// Pro camera settings
-struct ProSettings {
-    var iso: Float = 100.0         // ISO sensitivity
-    var shutterSpeed: Float = 1.0 / 30.0 // seconds
-    var focusDistance: Float = 0.0  // 0.0 to 1.0 (macro to infinity)
-    var whiteBalance: Float = 5500.0  // Kelvin
-    var exposureCompensation: Float = 0.0 // -4.0 to 4.0 EV
-}
+/// Data model types (WatermarkStyle, WatermarkPosition, WatermarkSettings,
+/// FilterSettings, ColorAdjustment, ProSettings) are defined once in
+/// CameraKit/CameraModel.swift and shared across the module.

@@ -32,27 +32,3 @@ enum CameraMode: Int, CaseIterable {
         }
     }
 }
-
-struct ColorAdjustment {
-    var brightness: Float = 0.0    // -1.0 to 1.0
-    var contrast: Float = 1.0      // 0.0 to 2.0
-    var saturation: Float = 1.0    // 0.0 to 2.0
-    var temperature: Float = 6500.0 // 2000 to 10000 Kelvin
-    var tint: Float = 0.0          // -1.0 to 1.0 (green to magenta)
-    var sharpness: Float = 0.0     // 0.0 to 1.0
-}
-
-struct ProSettings {
-    var iso: Float = 100.0         // ISO sensitivity
-    var shutterSpeed: Float = 1.0 / 30.0 // seconds
-    var focusDistance: Float = 0.0  // 0.0 to 1.0 (macro to infinity)
-    var whiteBalance: Float = 5500.0  // Kelvin
-    var exposureCompensation: Float = 0.0 // -4.0 to 4.0 EV
-}
-
-struct FilterSettings {
-    var lut: CGImage?
-    var intensity: Float = 1.0
-    var type: Int = 0  // filter segment index
-    var color: ColorAdjustment = ColorAdjustment()
-}

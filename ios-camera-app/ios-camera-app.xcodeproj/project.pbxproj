@@ -21,6 +21,207 @@
 				<key>settings</key>
 				<dict/>
 			</dict>
+			<key>BF2</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR3</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF3</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR4</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF4</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR5</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF5</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR6</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF6</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR7</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF7</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR8</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF8</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR9</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF9</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR10</string>
+				<key>settings</key>
+				<dict>
+					<key>COMPILER_FLAGS</key>
+					<string>-x objective-c++</string>
+				</dict>
+			</dict>
+			<key>BF10</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR11</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF11</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR12</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF12</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR13</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF13</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR14</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF14</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR15</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF15</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR16</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF16</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR17</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF17</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR18</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF18</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR19</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF19</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR20</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF20</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR21</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF21</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR22</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF22</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR23</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>BF23</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>FR24</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
 		</dict>
 		<key>PBXCopyFilesBuildPhase</key>
 		<dict/>
@@ -48,6 +249,248 @@
 				<key>sourceTree</key>
 				<string>BUILT_PRODUCTS_DIR</string>
 			</dict>
+			<key>FR3</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>SceneDelegate.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR4</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraViewController.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR5</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraMode.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR6</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>FilterPipeline.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR7</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>LUTManager.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR8</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>MetalFilterPipeline.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR9</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>FilmGrainView.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR10</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.metal</string>
+				<key>path</key>
+				<string>Shaders.metal</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR11</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>WatermarkManager.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR12</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>StickerOverlayView.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR13</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraModel.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR14</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraScreen.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR15</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>Controls.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR16</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>DialRuler.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR17</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>Motion.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR18</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>Overlays.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR19</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>RealCameraEngine.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR20</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>Tokens.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR21</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>lastKnownFileType</key>
+				<string>file.storyboard</string>
+				<key>path</key>
+				<string>Main.storyboard</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR22</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>lastKnownFileType</key>
+				<string>file.storyboard</string>
+				<key>path</key>
+				<string>LaunchScreen.storyboard</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR23</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>lastKnownFileType</key>
+				<string>text.plist.xml</string>
+				<key>path</key>
+				<string>Info.plist</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>FR24</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>lastKnownFileType</key>
+				<string>folder</string>
+				<key>path</key>
+				<string>Assets.xcassets</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
 		</dict>
 		<key>PBXFrameworksBuildPhase</key>
 		<dict>
@@ -72,6 +515,21 @@
 				<key>children</key>
 				<array>
 					<string>FR1</string>
+					<string>FR3</string>
+					<string>FR4</string>
+					<string>FR5</string>
+					<string>FR6</string>
+					<string>FR7</string>
+					<string>FR8</string>
+					<string>FR9</string>
+					<string>FR10</string>
+					<string>FR11</string>
+					<string>FR12</string>
+					<string>FR21</string>
+					<string>FR22</string>
+					<string>FR23</string>
+					<string>FR24</string>
+					<string>GR20</string>
 					<string>GR2</string>
 				</array>
 				<key>sourceTree</key>
@@ -90,6 +548,26 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
+			<key>GR20</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>children</key>
+				<array>
+					<string>FR13</string>
+					<string>FR14</string>
+					<string>FR15</string>
+					<string>FR16</string>
+					<string>FR17</string>
+					<string>FR18</string>
+					<string>FR19</string>
+					<string>FR20</string>
+				</array>
+				<key>path</key>
+				<string>CameraKit</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
 		</dict>
 		<key>PBXNativeTarget</key>
 		<dict>
@@ -103,6 +581,7 @@
 				<array>
 					<string>BS1</string>
 					<string>BP1</string>
+					<string>BR1</string>
 				</array>
 				<key>buildRules</key>
 				<array/>
@@ -136,7 +615,7 @@
 				<key>developmentRegion</key>
 				<string>en</string>
 				<key>hasScannedForEncodings</key>
-				<integer>0</string>
+				<integer>0</integer>
 				<key>knownRegions</key>
 				<array>
 					<string>en</string>
@@ -155,6 +634,25 @@
 				</array>
 			</dict>
 		</dict>
+		<key>PBXResourcesBuildPhase</key>
+		<dict>
+			<key>BR1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXResourcesBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array>
+					<string>BF20</string>
+					<string>BF21</string>
+					<string>BF22</string>
+					<string>BF23</string>
+				</array>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
 		<key>PBXSourcesBuildPhase</key>
 		<dict>
 			<key>BS1</key>
@@ -166,6 +664,24 @@
 				<key>files</key>
 				<array>
 					<string>BF1</string>
+					<string>BF2</string>
+					<string>BF3</string>
+					<string>BF4</string>
+					<string>BF5</string>
+					<string>BF6</string>
+					<string>BF7</string>
+					<string>BF8</string>
+					<string>BF9</string>
+					<string>BF10</string>
+					<string>BF11</string>
+					<string>BF12</string>
+					<string>BF13</string>
+					<string>BF14</string>
+					<string>BF15</string>
+					<string>BF16</string>
+					<string>BF17</string>
+					<string>BF18</string>
+					<string>BF19</string>
 				</array>
 				<key>runOnlyForDeploymentPostprocessing</key>
 				<integer>0</integer>
@@ -200,6 +716,8 @@
 					</array>
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>YES</string>
+					<key>INFOPLIST_FILE</key>
+					<string>ios-camera-app/Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
@@ -262,6 +780,8 @@
 					<string>YES</string>
 					<key>GENERATE_INFOPLIST_FILE</key>
 					<string>YES</string>
+					<key>INFOPLIST_FILE</key>
+					<string>ios-camera-app/Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
@@ -309,7 +829,7 @@
 					<string>XCC2</string>
 				</array>
 				<key>defaultConfigurationIsVisible</key>
-				<integer>0</string>
+				<integer>0</integer>
 				<key>defaultConfigurationName</key>
 				<string>Debug</string>
 			</dict>

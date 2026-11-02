@@ -14,7 +14,7 @@ import CoreVideo
 import Photos
 
 /// Real camera engine backing CameraKit. Implements CameraEngine using AVFoundation.
-final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSampleBufferDelegate {
+final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate {
 
     // MARK: - Capture session
 
@@ -24,7 +24,15 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var videoDeviceInput: AVCaptureDeviceInput?
     private var photoOutput: AVCapturePhotoOutput?
     private var videoOutput: AVCaptureVideoDataOutput?
+    private var movieFileOutput: AVCaptureMovieFileOutput?
     private var captureDevice: AVCaptureDevice?
+
+    // MARK: - Video recording
+
+    private var videoRecordingURL: URL?
+    private(set) var isRecording: Bool = false
+    /// Called on main thread when a video recording finishes and is saved.
+    var onVideoRecorded: ((URL) -> Void)?
 
     // MARK: - Histogram (48 bins, updated per frame)
 
@@ -98,7 +106,31 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             self.photoOutput = photoOutput
         }
 
+        // Movie file output for video recording
+        let movieFileOutput = AVCaptureMovieFileOutput()
+        if session.canAddOutput(movieFileOutput) {
+            session.addOutput(movieFileOutput)
+            self.movieFileOutput = movieFileOutput
+        }
+
         session.commitConfiguration()
+    }
+
+    /// Start video recording to a temporary file. Returns the output URL.
+    func startVideoRecording() -> URL? {
+        guard let movieFileOutput = movieFileOutput, !movieFileOutput.isRecording else { return nil }
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let url = documents.appendingPathComponent("video_\(Date().timeIntervalSince1970).mp4")
+        videoRecordingURL = url
+        movieFileOutput.startRecording(to: url, recordingDelegate: self)
+        isRecording = true
+        return url
+    }
+
+    /// Stop video recording. The saved URL is delivered via onVideoRecorded.
+    func stopVideoRecording() {
+        guard let movieFileOutput = movieFileOutput, movieFileOutput.isRecording else { return }
+        movieFileOutput.stopRecording()
     }
 
     /// Start the capture session with completion handler.
@@ -241,7 +273,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
                         )
                     }
 
-                    finalImage = Image(uiImage: processedImage)
+                    let finalImage = Image(uiImage: processedImage)
 
                     // Save to photo library
                     self?.saveToPhotoLibrary(image: finalImage) { saveResult in
@@ -372,6 +404,19 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         DispatchQueue.main.async { [weak self] in
             self?.onFilteredFrame?(filtered)
+        }
+    }
+
+    // MARK: - AVCaptureFileOutputRecordingDelegate
+
+    nonisolated func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        isRecording = false
+        if let error = error {
+            print("Video recording failed: \(error)")
+            return
+        }
+        DispatchQueue.main.async { [weak self] in
+            self?.onVideoRecorded?(outputFileURL)
         }
     }
 
