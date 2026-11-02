@@ -715,13 +715,11 @@
 						<string>$(inherited)</string>
 					</array>
 					<key>GENERATE_INFOPLIST_FILE</key>
-					<string>YES</string>
+					<string>NO</string>
 					<key>INFOPLIST_FILE</key>
 					<string>Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
-					<key>MACOSX_DEPLOYMENT_TARGET</key>
-					<string>14.0</string>
 					<key>MARKETING_VERSION</key>
 					<string>1.0</string>
 					<key>MTL_ENABLE_DEBUG_INFO</key>
@@ -779,13 +777,11 @@
 					<key>GCC_NO_COMMON_BLOCKS</key>
 					<string>YES</string>
 					<key>GENERATE_INFOPLIST_FILE</key>
-					<string>YES</string>
+					<string>NO</string>
 					<key>INFOPLIST_FILE</key>
 					<string>Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
-					<key>MACOSX_DEPLOYMENT_TARGET</key>
-					<string>14.0</string>
 					<key>MARKETING_VERSION</key>
 					<string>1.0</string>
 					<key>MTL_ENABLE_DEBUG_INFO</key>
