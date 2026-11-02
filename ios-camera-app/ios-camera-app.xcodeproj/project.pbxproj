@@ -493,7 +493,7 @@
 				<key>attributes</key>
 				<dict>
 					<key>LastUpgradeCheck</key>
-					<integer>1500</string>
+					<integer>1500</integer>
 				</dict>
 				<key>buildConfigurationList</key>
 				<string>CL1</string>
