@@ -4,12 +4,14 @@
 //
 //  Wires real AVFoundation hardware behind the CameraKit CameraEngine protocol.
 //  LUT filtering from decompiled Android APKs is applied during capture.
+//  Captured photos are saved to the device photo library.
 //
 
 import SwiftUI
 import AVFoundation
 import CoreImage
 import CoreVideo
+import Photos
 
 /// Real camera engine backing CameraKit. Implements CameraEngine using AVFoundation.
 final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -43,6 +45,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     var currentLUTIntensity: Float = 1.0
     var currentFilterType: Int = 0
 
+    /// Current watermark settings applied to preview and capture.
+    var currentWatermark: WatermarkSettings = WatermarkSettings()
+
     // MARK: - Initialization
 
     override init() {
@@ -52,9 +57,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
     private func setupSession() {
         session.beginConfiguration()
-        session.sessionPreset = .high
+        session.sessionPreset = .photo
 
-        // Camera device
+        // Camera device - prefer back wide angle camera
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("No back camera available")
             session.commitConfiguration()
@@ -84,6 +89,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         // Photo output for capture
         let photoOutput = AVCapturePhotoOutput()
+        photoOutput.isHighResolutionCaptureEnabled = true
         if session.canAddOutput(photoOutput) {
             session.addOutput(photoOutput)
             self.photoOutput = photoOutput
@@ -92,11 +98,16 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         session.commitConfiguration()
     }
 
-    /// Start the capture session (call from CameraScreen.onAppear).
-    func start() {
-        if !session.isRunning {
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                self?.session.startRunning()
+    /// Start the capture session with completion handler.
+    func start(completion: ((Bool) -> Void)? = nil) {
+        if session.isRunning {
+            completion?(true)
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.session.startRunning()
+            DispatchQueue.main.async {
+                completion?(self?.session.isRunning ?? false)
             }
         }
     }
@@ -117,7 +128,6 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         guard isoIndex < isoStops.count, speedIndex < shutterStops.count else { return }
 
         let iso = Float(isoStops[isoIndex])
-        // Parse shutter speed string like "1/250" -> seconds
         let shutterSeconds: Float
         if shutterStops[speedIndex].hasPrefix("1/") {
             let denom = Float(shutterStops[speedIndex].replacingOccurrences(of: "1/", with: "")) ?? 30
@@ -169,27 +179,92 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
     }
 
-    func capture(raw: Bool, bracket: Bool) async throws -> Image {
+    func capture(raw: Bool, hevc: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image {
         guard let photoOutput = photoOutput else {
             throw CameraEngineError.noPhotoOutput
         }
 
         return try await withCheckedThrowingContinuation { continuation in
             let settings: AVCapturePhotoSettings
-            if raw, let rawType = photoOutput.availableRawPhotoPixelFormatTypes.first {
-                settings = AVCapturePhotoSettings(rawPixelFormatType: rawType)
-            } else {
+
+            if raw {
+                // DNG (RAW) capture — use Bayer RAW pixel format
+                if let rawType = photoOutput.availableRawPhotoPixelFormatTypes.first {
+                    settings = AVCapturePhotoSettings(rawPixelFormatType: rawType)
+                } else {
+                    // Fallback: JPEG if RAW not supported
+                    settings = AVCapturePhotoSettings()
+                    settings.isHighResolutionCaptureEnabled = true
+                    settings.jpegQuality = 1.0
+                }
+            } else if hevc {
+                // HEVC capture — HEIF/HEVC compressed format
                 settings = AVCapturePhotoSettings()
+                settings.isHighResolutionCaptureEnabled = true
+                if #available(iOS 11.0, *) {
+                    settings.isHEVCPhotoQualityPrioritizationEnabled = true
+                }
+                settings.jpegQuality = 1.0
+            } else {
+                // Standard JPEG capture
+                settings = AVCapturePhotoSettings()
+                settings.isHighResolutionCaptureEnabled = true
+                settings.jpegQuality = 1.0
             }
 
-            photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate { result in
+            photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate { [weak self] result in
                 switch result {
                 case .success(let image):
-                    continuation.resume(returning: image)
+                    // Apply watermark to captured photo if enabled
+                    var finalImage = image
+                    if watermark.isEnabled {
+                        let uiImage = UIImage(image: image)
+                        let watermarked = WatermarkManager.applyWatermark(
+                            to: uiImage,
+                            style: watermark.style,
+                            position: watermark.position,
+                            opacity: watermark.opacity,
+                            scale: watermark.scale
+                        )
+                        finalImage = Image(uiImage: watermarked)
+                    }
+
+                    // Save to photo library
+                    self?.saveToPhotoLibrary(image: finalImage) { saveResult in
+                        switch saveResult {
+                        case .success:
+                            continuation(.success(finalImage))
+                        case .failure(let error):
+                            print("Failed to save to photo library: \(error)")
+                            continuation(.success(finalImage)) // Still return image even if save fails
+                        }
+                    }
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }
             })
+        }
+    }
+
+    /// Save a SwiftUI Image to the device photo library.
+    private func saveToPhotoLibrary(image: Image, completion: @escaping (Result<Void, Error>) -> Void) {
+        let uiImage = UIImage(image: image)
+        PHPhotoLibrary.requestAuthorization { status in
+            guard status == .authorized || status == .limited else {
+                completion(.failure(CameraEngineError.photoLibraryAccessDenied))
+                return
+            }
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAsset(from: uiImage)
+            }) { success, error in
+                if let error = error {
+                    completion(.failure(error))
+                } else if success {
+                    completion(.success(()))
+                } else {
+                    completion(.failure(CameraEngineError.photoLibrarySaveFailed))
+                }
+            }
         }
     }
 
@@ -201,14 +276,18 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         // Compute 48-bin histogram from luminance
         computeHistogram(from: pixelBuffer)
 
-        // Apply LUT filter pipeline and dispatch filtered frame to main thread
+        // Apply LUT filter pipeline with watermark and dispatch filtered frame to main thread
         let settings = FilterSettings(
             lut: currentLUT,
             intensity: currentLUTIntensity,
             type: currentFilterType,
             color: ColorAdjustment()
         )
-        let filtered = filterPipeline.apply(to: pixelBuffer, settings: settings)
+        let filtered = filterPipeline.apply(
+            to: pixelBuffer,
+            settings: settings,
+            watermark: currentWatermark
+        )
 
         DispatchQueue.main.async { [weak self] in
             self?.onFilteredFrame?(filtered)
@@ -240,8 +319,8 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         var pixelData = [UInt8](repeating: 0, count: width * height)
 
         guard let context = CGContext(data: &pixelData, width: width, height: height,
-                                        bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow,
-                                        space: colorSpace, bitmapInfo: CGImageAlphaInfo.none.rawValue) else {
+                                      bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow,
+                                      space: colorSpace, bitmapInfo: CGImageAlphaInfo.none.rawValue) else {
             return
         }
         context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
@@ -295,4 +374,6 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
 enum CameraEngineError: Error {
     case noPhotoOutput
     case noImageData
+    case photoLibraryAccessDenied
+    case photoLibrarySaveFailed
 }

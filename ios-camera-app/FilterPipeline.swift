@@ -14,12 +14,28 @@ import UIKit
 import CoreImage
 import CoreVideo
 import Accelerate
+import Metal
 
+/// Filter pipeline with optional GPU Metal backend.
+/// Ported from decompiled Android camera apps:
+///   - Vivo: LookupFilterParams → CameraLookupTableRenderNode → drawToTexture (LUT-based)
+///   - OnePlus: OplusFilter JNI → libOplusFilterLUTJni.so + libPolarrRender.so
+///
+/// Backend: Core Image (CPU/GPU hybrid) or Metal (pure GPU via Shaders.metal).
 class FilterPipeline {
 
     private let ciContext: CIContext
+    private let metalPipeline: MetalFilterPipeline?
+    private let useMetal: Bool
 
-    init() {
+    /// Create pipeline. Use Metal GPU backend when available and requested.
+    init(useMetal: Bool = MetalFilterPipeline.isMetalAvailable) {
+        self.useMetal = useMetal && MetalFilterPipeline.isMetalAvailable
+        if self.useMetal {
+            metalPipeline = MetalFilterPipeline()
+        } else {
+            metalPipeline = nil
+        }
         if let eaglContext = EAGLContext(api: .openGLES3) {
             ciContext = CIContext(eaglContext: eaglContext, options: [.workingColorSpace: NSNull()])
         } else {
@@ -27,12 +43,27 @@ class FilterPipeline {
         }
     }
 
+    /// Whether the Metal GPU backend is active.
+    var isUsingMetal: Bool { useMetal }
+
     /// Apply full filter pipeline to a CVPixelBuffer.
+    /// Routes to Metal GPU backend when available, otherwise Core Image.
     /// Returns a UIImage suitable for display.
     func apply(
         to pixelBuffer: CVPixelBuffer,
-        settings: FilterSettings
+        settings: FilterSettings,
+        watermark: WatermarkSettings = WatermarkSettings()
     ) -> UIImage {
+        // GPU path: Metal Shading Language shaders (ported from GLSL in com.oplus.camera.gl)
+        if useMetal, let metalPipeline = metalPipeline {
+            // Metal path doesn't yet support watermark; fall back to CI for watermark frames
+            if !watermark.isEnabled,
+               let metalImage = metalPipeline.apply(to: pixelBuffer, settings: settings) {
+                return metalImage
+            }
+        }
+
+        // CPU/GPU-hybrid path: Core Image
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         var filtered = ciImage
 
@@ -50,6 +81,18 @@ class FilterPipeline {
 
         // 5. Apply film grain
         filtered = applyFilmGrain(to: filtered, intensity: settings.intensity * 0.15)
+
+        // 6. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        if watermark.isEnabled {
+            filtered = WatermarkManager.applyToPixelBuffer(
+                pixelBuffer,
+                style: watermark.style,
+                position: watermark.position,
+                opacity: watermark.opacity,
+                scale: watermark.scale,
+                context: ciContext
+            )
+        }
 
         return renderToUIImage(filtered)
     }

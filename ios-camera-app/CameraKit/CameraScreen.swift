@@ -2,25 +2,32 @@ import SwiftUI
 
 /// Full capture screen. Layout follows the 393 × 852 anatomy:
 /// top bar 48 · viewfinder 3:4 · exposure 64 · focus 96 · capture row.
+///
+/// The viewfinder area is transparent so the filtered camera preview
+/// (rendered by CameraViewController's filteredPreviewView) shows through.
+/// All UI controls are overlaid on top.
 struct CameraScreen<Viewfinder: View>: View {
     @State private var model = CameraModel()
     @ViewBuilder var viewfinder: () -> Viewfinder
 
     var body: some View {
         ZStack {
-            CKColor.base.ignoresSafeArea()
+            // Clear background so filtered preview from CameraViewController shows through
+            Color.clear.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 TopBar(bracket: model.bracket, flashOn: $model.flashOn)
 
-                // Viewfinder
+                // Viewfinder area — transparent, filtered frames show from behind
                 ZStack(alignment: .top) {
                     viewfinder()
+                        .opacity(0) // Hide placeholder, show filtered preview behind
+
                     if model.showGrid { GridOverlay() }
                     if model.showPeaking { PeakingOverlay(edges: nil) }
                     if model.showHistogram {
                         TimelineView(.periodic(from: .now, by: 0.12)) { ctx in
-                            HistogramPanel(bins: MockHistogram.bins(at: ctx.date.timeIntervalSinceReferenceDate))
+                            HistogramPanel(bins: model.histogram)
                         }
                         .transition(.panelPop)
                     }
@@ -89,15 +96,7 @@ struct CameraScreen<Viewfinder: View>: View {
     }
 }
 
-// MARK: - Placeholder scene + previews
-
-struct PlaceholderScene: View {
-    var body: some View {
-        LinearGradient(colors: [Color(hex: 0x3F56A0), Color(hex: 0x6483C9), Color(hex: 0xE3B08A),
-                                Color(hex: 0x33457F), Color(hex: 0x233466)],
-                       startPoint: .top, endPoint: .bottom)
-    }
-}
+// MARK: - Previews
 
 #Preview("Camera") {
     CameraScreen { PlaceholderScene() }
@@ -113,4 +112,14 @@ struct PlaceholderScene: View {
     }
     .padding()
     .background(CKColor.base)
+}
+
+// MARK: - Placeholder scene (only used in previews)
+
+struct PlaceholderScene: View {
+    var body: some View {
+        LinearGradient(colors: [Color(hex: 0x3F56A0), Color(hex: 0x6483C9), Color(hex: 0xE3B08A),
+                                Color(hex: 0x33457F), Color(hex: 0x233466)],
+                       startPoint: .top, endPoint: .bottom)
+    }
 }

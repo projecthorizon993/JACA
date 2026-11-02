@@ -21,3 +21,7 @@ Pods/
 
 # Swift
 *.swiftpm
+
+# Camera APK binaries (excluded - exceed GitHub file size limit, kept locally only)
+*.apk
+*.xapk

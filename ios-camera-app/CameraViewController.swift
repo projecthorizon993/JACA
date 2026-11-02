@@ -3,7 +3,8 @@
 //  ios-camera-app
 //
 //  Hosts the CameraKit SwiftUI CameraScreen with a real AVFoundation engine.
-//  LUT filtering from decompiled Android APKs is applied during capture.
+//  LUT filtering, watermarks, and capture formats (JPG/HEVC/DNG) from decompiled
+//  Android camera APKs are applied during capture.
 //
 
 import UIKit
@@ -14,6 +15,7 @@ import CoreImage
 class CameraViewController: UIViewController {
 
     private var hostingController: UIHostingController<CameraScreen>?
+    private var screen: CameraScreen!
     private let cameraEngine = RealCameraEngine()
     private let filterPipeline = FilterPipeline()
 
@@ -21,6 +23,12 @@ class CameraViewController: UIViewController {
 
     private let filteredPreviewView = UIImageView()
     private let lutSegmentedControl = UISegmentedControl()
+    private let formatSegmentedControl = UISegmentedControl(items: ["JPG", "HEVC", "DNG"])
+    private let watermarkStyleControl = UISegmentedControl()
+    private let watermarkPositionControl = UISegmentedControl(items: ["BR", "BL", "TR", "TL", "C"])
+    private let watermarkOpacitySlider = UISlider()
+    private let watermarkScaleSlider = UISlider()
+    private let watermarkToggle = UISwitch()
 
     // MARK: - State
 
@@ -34,7 +42,13 @@ class CameraViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        cameraEngine.start()
+        cameraEngine.start { [weak self] success in
+            if !success {
+                DispatchQueue.main.async {
+                    self?.showCameraUnavailableAlert()
+                }
+            }
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -42,12 +56,20 @@ class CameraViewController: UIViewController {
         cameraEngine.stop()
     }
 
+    private func showCameraUnavailableAlert() {
+        let alert = UIAlertController(title: "Camera Unavailable",
+                                      message: "No camera device found on this device.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
     // MARK: - Setup
 
     private func setupUI() {
         view.backgroundColor = .black
 
-        // Filtered preview — shows camera frames with LUT applied
+        // Filtered preview — shows camera frames with LUT + watermark applied
         filteredPreviewView.translatesAutoresizingMaskIntoConstraints = false
         filteredPreviewView.contentMode = .scaleAspectFill
         filteredPreviewView.clipsToBounds = true
@@ -65,6 +87,49 @@ class CameraViewController: UIViewController {
         lutSegmentedControl.addTarget(self, action: #selector(lutChanged(_:)), for: .valueChanged)
         view.addSubview(lutSegmentedControl)
 
+        // Capture format selector
+        formatSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        formatSegmentedControl.selectedSegmentIndex = 0
+        formatSegmentedControl.addTarget(self, action: #selector(formatChanged(_:)), for: .valueChanged)
+        view.addSubview(formatSegmentedControl)
+
+        // Watermark style selector
+        watermarkStyleControl.translatesAutoresizingMaskIntoConstraints = false
+        watermarkStyleControl.insertSegment(withTitle: "Off", at: 0, animated: false)
+        for (index, style) in WatermarkStyle.allCases.enumerated() where style != .off {
+            watermarkStyleControl.insertSegment(withTitle: style.rawValue, at: index, animated: false)
+        }
+        watermarkStyleControl.selectedSegmentIndex = 0
+        watermarkStyleControl.addTarget(self, action: #selector(watermarkStyleChanged(_:)), for: .valueChanged)
+        view.addSubview(watermarkStyleControl)
+
+        // Watermark position selector
+        watermarkPositionControl.translatesAutoresizingMaskIntoConstraints = false
+        watermarkPositionControl.selectedSegmentIndex = 1 // Bottom Right
+        watermarkPositionControl.addTarget(self, action: #selector(watermarkPositionChanged(_:)), for: .valueChanged)
+        view.addSubview(watermarkPositionControl)
+
+        // Watermark opacity slider
+        watermarkOpacitySlider.translatesAutoresizingMaskIntoConstraints = false
+        watermarkOpacitySlider.minimumValue = 0
+        watermarkOpacitySlider.maximumValue = 1
+        watermarkOpacitySlider.value = 0.8
+        watermarkOpacitySlider.addTarget(self, action: #selector(watermarkOpacityChanged(_:)), for: .valueChanged)
+        view.addSubview(watermarkOpacitySlider)
+
+        // Watermark scale slider
+        watermarkScaleSlider.translatesAutoresizingMaskIntoConstraints = false
+        watermarkScaleSlider.minimumValue = 0.05
+        watermarkScaleSlider.maximumValue = 0.5
+        watermarkScaleSlider.value = 0.15
+        watermarkScaleSlider.addTarget(self, action: #selector(watermarkScaleChanged(_:)), for: .valueChanged)
+        view.addSubview(watermarkScaleSlider)
+
+        // Watermark toggle
+        watermarkToggle.translatesAutoresizingMaskIntoConstraints = false
+        watermarkToggle.addTarget(self, action: #selector(watermarkToggled(_:)), for: .valueChanged)
+        view.addSubview(watermarkToggle)
+
         NSLayoutConstraint.activate([
             filteredPreviewView.topAnchor.constraint(equalTo: view.topAnchor),
             filteredPreviewView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -74,18 +139,56 @@ class CameraViewController: UIViewController {
             lutSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             lutSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             lutSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            lutSegmentedControl.heightAnchor.constraint(equalToConstant: 32)
+            lutSegmentedControl.heightAnchor.constraint(equalToConstant: 32),
+
+            formatSegmentedControl.topAnchor.constraint(equalTo: lutSegmentedControl.bottomAnchor, constant: 8),
+            formatSegmentedControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            formatSegmentedControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            formatSegmentedControl.heightAnchor.constraint(equalToConstant: 32),
+
+            watermarkStyleControl.topAnchor.constraint(equalTo: formatSegmentedControl.bottomAnchor, constant: 8),
+            watermarkStyleControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            watermarkStyleControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            watermarkStyleControl.heightAnchor.constraint(equalToConstant: 32),
+
+            watermarkPositionControl.topAnchor.constraint(equalTo: watermarkStyleControl.bottomAnchor, constant: 6),
+            watermarkPositionControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            watermarkPositionControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            watermarkPositionControl.heightAnchor.constraint(equalToConstant: 30),
+
+            watermarkOpacitySlider.topAnchor.constraint(equalTo: watermarkPositionControl.bottomAnchor, constant: 6),
+            watermarkOpacitySlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            watermarkOpacitySlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            watermarkScaleSlider.topAnchor.constraint(equalTo: watermarkOpacitySlider.bottomAnchor, constant: 6),
+            watermarkScaleSlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            watermarkScaleSlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            watermarkToggle.centerYAnchor.constraint(equalTo: watermarkScaleSlider.centerYAnchor),
+            watermarkToggle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
 
     private func setupSwiftUICamera() {
-        let screen = CameraScreen { PlaceholderScene() }
-        screen.model.cameraEngine = cameraEngine
+        self.screen = CameraScreen { PlaceholderScene() }
+        self.screen.model.cameraEngine = cameraEngine
 
-        // Wire filtered frame callback — displays LUT-applied preview
+        // Wire filtered frame callback — displays LUT + watermark applied preview
         cameraEngine.onFilteredFrame = { [weak self] image in
             self?.filteredPreviewView.image = image
         }
+
+        // Wire histogram updates from camera engine to model
+        cameraEngine.histogram // access to trigger KVO-like observation
+        // We poll the histogram on a timer since @Observable doesn't auto-publish
+        // from a non-Observable object
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.screen.model.updateHistogram(self.cameraEngine.histogram)
+        }
+
+        // Wire capture format selector to CameraModel
+        formatSegmentedControl.addTarget(self, action: #selector(formatChanged(_:)), for: .valueChanged)
 
         let hosting = UIHostingController(rootView: screen)
         hosting.view.translatesAutoresizingMaskIntoConstraints = false
@@ -108,19 +211,70 @@ class CameraViewController: UIViewController {
     // MARK: - LUT filter selection
 
     @objc private func lutChanged(_ sender: UISegmentedControl) {
-        currentLUTIndex = sender.selectedSegmentIndex
+        let index = sender.selectedSegmentIndex
 
-        if currentLUTIndex == 0 {
-            // "None" — no LUT
+        if index == 0 {
             cameraEngine.currentLUT = nil
             cameraEngine.currentFilterType = 0
         } else {
-            let lutIndex = currentLUTIndex - 1
+            let lutIndex = index - 1
             let lutName = LUTManager.availableLUTs[lutIndex]
             cameraEngine.currentLUT = LUTManager.loadLUT(named: lutName)
             cameraEngine.currentFilterType = 1 // LUT-based filter
         }
         cameraEngine.currentLUTIntensity = 1.0
+    }
+
+    @objc private func formatChanged(_ sender: UISegmentedControl) {
+        screen.model.captureFormat = CameraModel.CaptureFormat.allCases[sender.selectedSegmentIndex]
+    }
+
+    // MARK: - Watermark controls
+
+    @objc private func watermarkStyleChanged(_ sender: UISegmentedControl) {
+        let styles = WatermarkStyle.allCases
+        let style = styles[sender.selectedSegmentIndex]
+        screen.model.watermarkStyle = style
+        screen.model.watermarkEnabled = style != .off
+        watermarkToggle.isOn = style != .off
+
+        // Sync to camera engine for preview
+        syncWatermarkToEngine()
+    }
+
+    @objc private func watermarkPositionChanged(_ sender: UISegmentedControl) {
+        let positions = WatermarkPosition.allCases
+        screen.model.watermarkPosition = positions[sender.selectedSegmentIndex]
+        syncWatermarkToEngine()
+    }
+
+    @objc private func watermarkOpacityChanged(_ sender: UISlider) {
+        screen.model.watermarkOpacity = sender.value
+        syncWatermarkToEngine()
+    }
+
+    @objc private func watermarkScaleChanged(_ sender: UISlider) {
+        screen.model.watermarkScale = sender.value
+        syncWatermarkToEngine()
+    }
+
+    @objc private func watermarkToggled(_ sender: UISwitch) {
+        screen.model.watermarkEnabled = sender.isOn
+        if sender.isOn && screen.model.watermarkStyle == .off {
+            screen.model.watermarkStyle = .leicaSignature
+            watermarkStyleControl.selectedSegmentIndex = WatermarkStyle.allCases.firstIndex(of: .leicaSignature) ?? 1
+        }
+        syncWatermarkToEngine()
+    }
+
+    private func syncWatermarkToEngine() {
+        cameraEngine.currentWatermark = WatermarkSettings(
+            style: screen.model.watermarkStyle,
+            position: screen.model.watermarkPosition,
+            opacity: screen.model.watermarkOpacity,
+            scale: screen.model.watermarkScale,
+            isEnabled: screen.model.watermarkEnabled
+        )
     }
 }
 

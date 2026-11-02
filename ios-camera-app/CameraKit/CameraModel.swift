@@ -6,7 +6,7 @@ final class CameraModel {
     enum ControlMode {
         case a, m
         var glyph: String { self == .a ? "A" : "M" }
-        var showsExposureRulers: Bool { self == .a }   // ASSUMPTION — see AGENT_BRIEF.md §6
+        var showsExposureRulers: Bool { self == .a }
     }
     enum FocusMode { case auto, manual }
     enum Zoom: String, CaseIterable {
@@ -37,13 +37,50 @@ final class CameraModel {
     var captureCount = 0
     var lastPhoto: Image? = nil
 
+    // Real-time histogram from camera engine (48 bins, 0…1)
+    var histogram: [Double] = Array(repeating: 0.0, count: 48)
+
+    /// Capture format: JPG, HEVC, or DNG (RAW)
+    enum CaptureFormat: String, CaseIterable {
+        case jpg   = "JPG"
+        case hevc  = "HEVC"
+        case dng   = "DNG (RAW)"
+    }
+
+    var captureFormat: CaptureFormat = .jpg
+
+    /// Watermark settings (ported from Xiaomi/OnePlus/Vivo watermark systems)
+    var watermarkStyle: WatermarkStyle = .off
+    var watermarkPosition: WatermarkPosition = .bottomRight
+    var watermarkOpacity: Float = 0.8
+    var watermarkScale: Float = 0.15
+    var watermarkEnabled: Bool = false
+
     /// The real camera engine (wires AVFoundation). Set by CameraViewController.
     weak var cameraEngine: (any CameraEngine)?
+
+    /// Update histogram from camera engine (called on main thread).
+    func updateHistogram(_ bins: [Double]) {
+        histogram = bins
+    }
 
     func capture() {
         Task {
             do {
-                let image = try await cameraEngine?.capture(raw: rawOn, bracket: bracket != nil) ?? Image(systemName: "photo")!
+                let isRaw = captureFormat == .dng
+                let isHEVC = captureFormat == .hevc
+                let image = try await cameraEngine?.capture(
+                    raw: isRaw,
+                    hevc: isHEVC,
+                    bracket: bracket != nil,
+                    watermark: WatermarkSettings(
+                        style: watermarkStyle,
+                        position: watermarkPosition,
+                        opacity: watermarkOpacity,
+                        scale: watermarkScale,
+                        isEnabled: watermarkEnabled
+                    )
+                ) ?? Image(systemName: "photo")!
                 await MainActor.run {
                     lastPhoto = image
                     captureCount += 1
@@ -62,19 +99,60 @@ protocol CameraEngine: AnyObject {
     func apply(isoIndex: Int, speedIndex: Int)
     func apply(focusDistance: Double?)                  // nil = continuous AF
     func setZoom(_ zoom: CameraModel.Zoom)
-    func capture(raw: Bool, bracket: Bool) async throws -> Image
+    func capture(raw: Bool, hevc: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image
 }
 
-/// Fake histogram for previews/demo.
-enum MockHistogram {
-    static func bins(at t: TimeInterval, count: Int = 48) -> [Double] {
-        (0..<count).map { i in
-            let x = Double(i) / Double(count - 1)
-            func g(_ m: Double, _ s: Double) -> Double { exp(-pow(x - m, 2) / (2 * s * s)) }
-            let drift = 0.03 * sin(t * 1.3 + Double(i) * 0.4)
-            let v = 0.05 + 0.55 * g(0.15, 0.06) + 0.38 * g(0.33, 0.07) + 0.2 * g(0.5, 0.12)
-                  + 0.5 * g(0.78, 0.06) + 0.15 * g(0.9, 0.05) + drift
-            return min(max(v, 0.02), 1)
-        }
-    }
+/// Watermark style options ported from decompiled Android camera apps
+enum WatermarkStyle: String, CaseIterable {
+    case off = "Off"
+    case leicaSignature = "Leica Signature"
+    case xiaomiBrand = "Xiaomi Brand"
+    case pocoBrand = "POCO Brand"
+    case redmiBrand = "Redmi Brand"
+    case vivoTail = "Vivo Tail"
+}
+
+/// Watermark position options
+enum WatermarkPosition: String, CaseIterable {
+    case bottomRight = "Bottom Right"
+    case bottomLeft = "Bottom Left"
+    case topRight = "Top Right"
+    case topLeft = "Top Left"
+    case center = "Center"
+}
+
+/// Data model for watermark settings
+struct WatermarkSettings {
+    var style: WatermarkStyle = .off
+    var position: WatermarkPosition = .bottomRight
+    var opacity: Float = 0.8
+    var scale: Float = 0.15
+    var isEnabled: Bool = false
+}
+
+/// Filter settings for the filter pipeline
+struct FilterSettings {
+    var lut: CGImage?
+    var intensity: Float = 1.0
+    var type: Int = 0  // filter segment index
+    var color: ColorAdjustment = ColorAdjustment()
+}
+
+/// Color adjustment parameters
+struct ColorAdjustment {
+    var brightness: Float = 0.0    // -1.0 to 1.0
+    var contrast: Float = 1.0      // 0.0 to 2.0
+    var saturation: Float = 1.0    // 0.0 to 2.0
+    var temperature: Float = 6500.0 // 2000 to 10000 Kelvin
+    var tint: Float = 0.0          // -1.0 to 1.0 (green to magenta)
+    var sharpness: Float = 0.0     // 0.0 to 1.0
+}
+
+/// Pro camera settings
+struct ProSettings {
+    var iso: Float = 100.0         // ISO sensitivity
+    var shutterSpeed: Float = 1.0 / 30.0 // seconds
+    var focusDistance: Float = 0.0  // 0.0 to 1.0 (macro to infinity)
+    var whiteBalance: Float = 5500.0  // Kelvin
+    var exposureCompensation: Float = 0.0 // -4.0 to 4.0 EV
 }

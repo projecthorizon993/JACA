@@ -126,7 +126,7 @@ ios-camera-app/
 **Capture**: `AVFoundation` via `RealCameraEngine` (`AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput`, `AVCapturePhotoOutput`)
 
 **Modes** (CameraKit):
-- **Photo** (A): exposure rulers visible, LUT filters + color adjustments
+- **Photo** (A): exposure rulers visible, LUT filters + color adjustments, watermarks
 - **Video**: video recording via `AVCaptureMovieFileOutput`
 - **Pro** (M): minimal UI, manual ISO (50-3200), shutter (1-1/8000s), focus distance (0-2m), white balance (2800-7000K)
 
@@ -136,6 +136,13 @@ ios-camera-app/
 - `CIColorMatrix` for temperature (2000-10000K) and tint (green-magenta)
 - `CISharpenLuminance` for sharpness
 - Film grain from `film_grain_small.bin`
+
+**GPU Support** (Metal Shading Language — ported from recovered GLSL in `com.oplus.camera.gl`):
+- `MetalFilterPipeline.swift` — GPU-accelerated filter pipeline using Metal
+- `Shaders.metal` — fragment shaders: `vertex_pass_through`, `fragment_color_cube`, `fragment_color_controls`, `fragment_temperature_tint`, `fragment_sharpen`, `fragment_film_grain`
+- `FilterPipeline.useMetal` — auto-detects Metal availability; falls back to Core Image
+- `MetalFilterPipeline.isMetalAvailable` — checks `MTLCreateSystemDefaultDevice() != nil`
+- Shader pipeline: full-screen quad → color cube (LUT) → color controls → temperature/tint → sharpen → film grain
 
 **LUT Assets** (extracted from APKs, in `Assets.xcassets/LUTs.lutcollection/`):
 | LUT | Source APK | Asset |
@@ -150,9 +157,44 @@ ios-camera-app/
 | `aifilter_portrait` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_portrait.png` |
 | `aifilter_sunset` | vivo-camera-12.1.15.602.apk | `assets/aifilter/aifilter_sunset.png` |
 
+**Watermark Assets** (extracted from APKs, in `Assets.xcassets/Watermarks.imageset/`):
+| Watermark | Source APK | Asset |
+|---|---|---|
+| `wm_leica_signature_black` | xiaomi.apk | `assets/watermarks/leica/88/icon_signature_black.webp` |
+| `wm_leica_signature_white` | xiaomi.apk | `assets/watermarks/leica/88/icon_signature_white.webp` |
+| `wm_xiaomi_black` | xiaomi.apk | `assets/watermarks/classic/17/xiaomi_black.webp` |
+| `wm_xiaomi_white` | xiaomi.apk | `assets/watermarks/classic/17/xiaomi_white.webp` |
+| `wm_poco_black` | xiaomi.apk | `assets/watermarks/classic/17/poco_black.webp` |
+| `wm_poco_white` | xiaomi.apk | `assets/watermarks/classic/17/poco_white.webp` |
+| `wm_redmi_black` | xiaomi.apk | `assets/watermarks/classic/17/redmi_black.webp` |
+| `wm_redmi_white` | xiaomi.apk | `assets/watermarks/classic/17/redmi_white.webp` |
+| `wm_bg_white` | xiaomi.apk | `assets/watermarks/classic/17/icon_background_white.webp` |
+| `wm_bg_black` | xiaomi.apk | `assets/watermarks/classic/17/icon_background_black.webp` |
+| `wm_vivo_tail` | vivo-camera-12.1.15.602.apk | `assets/vlogeffect/tail/tail_02/images/watermark2_49.jpg` |
+
+**Watermark Styles** (`WatermarkStyle`):
+| Style | Source | Description |
+|---|---|---|
+| `leicaSignature` | Xiaomi (Leica) | Leica camera signature watermark |
+| `xiaomiBrand` | Xiaomi | Xiaomi brand logo watermark |
+| `pocoBrand` | Xiaomi | POCO brand logo watermark |
+| `redmiBrand` | Xiaomi | Redmi brand logo watermark |
+| `vivoTail` | Vivo | Vivo video tail/end-screen watermark |
+
+**Watermark Pipeline**: `WatermarkManager` composites watermark PNGs onto camera frames using `CISourceOverCompositing` with adjustable opacity (0-1) and scale (0.05-0.5). Applied both to live preview (per-frame) and captured photos.
+
 **Histogram**: 48-bin luminance histogram computed per frame from `AVCaptureVideoDataOutput`
 
-**LUT Pipeline**: `RealCameraEngine` applies `FilterPipeline` (CIColorCube LUT) to each `AVCaptureVideoDataOutput` frame and dispatches the filtered `UIImage` to the main thread via `onFilteredFrame` callback.
+**LUT Pipeline**: `RealCameraEngine` applies `FilterPipeline` (CIColorCube LUT or Metal shader) to each `AVCaptureVideoDataOutput` frame and dispatches the filtered `UIImage` to the main thread via `onFilteredFrame` callback.
+
+**Capture Formats** (`CameraModel.CaptureFormat`):
+| Format | Description | AVFoundation setting |
+|---|---|---|
+| `JPG` | Standard JPEG | `settings.jpegQuality = 1.0` |
+| `HEVC` | HEIF/HEVC compressed | `settings.isHEVCPhotoQualityPrioritizationEnabled = true` |
+| `DNG` | RAW (Bayer) | `AVCapturePhotoSettings(rawPixelFormatType:)` |
+
+**Photo Save**: Captured photos (with LUT + watermark applied) are saved to the device photo library via `PHPhotoLibrary`.
 
 **Overlays**: `CALayer` / `UIImage` for stickers and vignettes
 **Fonts**: Gotham-Bold, Gilroy for UI text
