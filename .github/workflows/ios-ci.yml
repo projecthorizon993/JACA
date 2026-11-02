@@ -1,0 +1,47 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode version
+        run: sudo xcode-select -switch /Applications/Xcode_15.0.app
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Install CocoaPods (if needed)
+        run: |
+          if [ -f ios-camera-app/Podfile ]; then
+            gem install cocoapods
+            cd ios-camera-app && pod install
+          fi
+
+      - name: Build iOS app (Debug)
+        run: |
+          xcodebuild -workspace ios-camera-app/ios-camera-app.xcworkspace \
+            -scheme ios-camera-app \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            build
+
+      - name: Build iOS app (Release)
+        run: |
+          xcodebuild -workspace ios-camera-app/ios-camera-app.xcworkspace \
+            -scheme ios-camera-app \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            build

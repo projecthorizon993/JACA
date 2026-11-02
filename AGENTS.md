@@ -1,0 +1,121 @@
+# AGENTS.md — Camera App Reverse Engineering & iOS Port
+
+This repository contains compiled Android camera APK/XAPK binaries, **not** source code. The goal is to decompile them, extract reusable camera assets (LUTs, filters, fonts, shaders), and port the filter pipeline to an iPhone UIKit camera app.
+
+## Repository Contents (8 files in D:\learn)
+
+| File | Size | Role |
+|---|---|---|
+| `oneplus-camera-3.102.28.apk` | ~111 MB | OnePlus camera app — **decompiled** |
+| `oneplus.apk` | 5.5 KB | Stub (not the camera app) |
+| `vivo-camera-12.1.15.602.apk` | ~201 MB | Vivo camera app — **decompiled** |
+| `vivo-13.5.8.0.apk` | ~189 MB | Vivo camera app — **decompiled** |
+| `vivo.apk` | ~293 MB | Camera app — not yet decompiled |
+| `xiaomi.apk` | ~199 MB | Camera app — not yet decompiled |
+| `phocus-mobile-1.1.0.xapk` | ~178 MB | Xiaomi/Phocus camera bundle — not yet decompiled |
+| `phocus.xapk` | 5.5 KB | Stub |
+
+No git repo, no README, no build/test/lint/CI config, no existing instruction files.
+
+## Tooling (Verified Installed)
+
+| Tool | Version | Location |
+|---|---|---|
+| jadx | 1.5.6 | `C:\Users\Admin\.local\share\jadx\bin\jadx.bat` |
+| Java | 26.0.2 (Zulu) | `java.exe` on PATH |
+| Python | 3.x | `python.exe` / `python3.exe` on PATH |
+
+## Exact Decompilation Commands
+
+All decompiled output goes to `C:\Users\Admin\AppData\Local\Temp\opencode\` — **do not pollute `D:\learn` with scratch work**.
+
+```powershell
+# Initial decompile (code only, faster)
+& "C:\Users\Admin\.local\share\jadx\bin\jadx.bat" -d "$env:TEMP\oneplus_decompiled" -r -j 4 "D:\learn\oneplus-camera-3.102.28.apk"
+
+# Deobfuscation pass (recommended for obfuscated apps)
+& "C:\Users\Admin\.local\share\jadx\bin\jadx.bat" -d "$env:TEMP\<out>" -r -j 4 --deobf "<apk>"
+
+# Compare jadx vs fernflower (requires dex2jar)
+& "C:\Users\Admin\.local\share\jadx\bin\jadx.bat" --engine both -d "$env:TEMP\<out>" "<apk>"
+```
+
+**Exit codes**: jadx exits with code 1 even on success (non-fatal decompilation errors are normal — count ~10-100 is expected). Check that `.java` files were produced in `<out>/sources/`.
+
+## Deobfuscation Status (Verified)
+
+| APK | Classes | Errors | Output Dir |
+|---|---|---|---|
+| oneplus-camera-3.102.28.apk | 1,897 | 10 | `$env:TEMP\oneplus_decompiled` |
+| vivo-camera-12.1.15.602.apk | 7,252 | 10 | `$env:TEMP\vivo12_decompiled` |
+| vivo-13.5.8.0.apk | 13,955 | 101 | `$env:TEMP\vivo13_decompiled` |
+
+**Non-obfuscated anchor classes** (use as entry points — do not guess obfuscated names):
+
+| Class | Package | Role |
+|---|---|---|
+| `MyApplication` | `com.oplus.camera` | Application entry |
+| `EntryProvider` | `com.oplus.camera.entry` | ContentProvider entry |
+| `CameraConfig` | `com.oplus.camera.config` | Camera config init |
+| `OplusFilter` | `com.oplus.camera.filter` | Filter JNI bridge |
+| `CameraFilterNodeProcessor` | `com.vivo.viengine.process.nodeprocessor` | Vivo LUT filter node |
+| `LookupFilterParams` | `com.vivo.viengine.node.params` | LUT/mask/noise/light/frame paths |
+| `AIFilterNodeProcessor` | `com.vivo.viengine.process.nodeprocessor` | Vivo AI scene filters |
+
+## Filter Pipeline Architecture (Verified from Decompiled Code)
+
+**Vivo LUT pipeline** (`com.vivo.viengine`):
+```
+RenderRequest → CameraFilterNodeProcessor ("VICameraLUTNode")
+  → LookupFilterParams {lookupLutPath, maskPath, noisePath, lightPath, framePath, intensity}
+  → CameraLookupTableRenderNode.updateRenderEngineParam().setEffect(intensity)
+  → drawToTexture()
+```
+
+**OnePlus JNI pipeline** (`com.oplus.camera.filter.OplusFilter`):
+```
+init() → applyYuvFilter(byte[], int) → setFilterType(String) → setSize() → release()
+  → loads libOplusFilterLUTJni.so + libPolarrRender.so
+```
+
+**GLSL shaders recovered** (`com.oplus.camera.gl`): texture sampling with `sampler2D`/`samplerExternalOES`, alpha blending, color uniforms (`uRed`/`uGreen`/`uBlue`), framebuffer attachments, vertex shaders with `uMatrix`/`uTextureMatrix`.
+
+## Extracted Reusable Assets → iOS Mapping
+
+Stage all assets to `C:\Users\Admin\AppData\Local\Temp\opencode\ios-camera-assets\`:
+
+| Asset Source | iOS Reuse |
+|---|---|
+| `lut_all_points.png`, `filter_*.png`, `new_filter_*.png` | `CIColorCube` LUT or Metal texture |
+| `lut1.png.bin`, `daily_lut.png.bin` | LUT 3D texture data |
+| `film_grain_small.bin` (4MB), `texPerlinNoise.pkm` | Film grain noise texture |
+| `Gotham-Bold.otf`, `Gilroy-Medium.otf`, `Roboto-Bold.ttf` | `UIFont` for camera controls |
+| `overlay_p4_3_weak.png`, `filter_night_style_*.png` | Vignette/light-leak `CALayer` overlays |
+| Sticker PNGs + ZIPs in `sticker/material/` | Sticker overlays |
+| GLSL shaders (`frag_tex.sh`, `vertex_tex.sh`, etc.) | Port GLSL → Metal Shading Language (MSL) |
+| `M_SenseME_Action_5.2.12.model` (3.6MB) | Core ML action detection (if convertible) |
+
+## iOS Camera App (UIKit, iPhone) — To Be Scaffolded
+
+Target: iPhone, UIKit, AVFoundation capture + Metal/Core Image filter pipeline.
+
+Planned structure:
+```
+ios-camera-app/
+├── CameraViewController.swift    # AVCaptureSession setup
+├── FilterPipeline.swift          # CIColorCube LUT + Metal fallback
+├── LUTManager.swift              # Load LUT PNGs from asset bundle
+├── StickerOverlayView.swift      # CALayer-based sticker overlays
+├── FilmGrainView.swift           # Noise texture from film_grain_small.bin
+├── Assets.xcassets               # Extracted fonts, LUTs, overlays
+└── Info.plist                    # Camera + microphone permissions
+```
+
+**Capture**: `AVFoundation` (`AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput`)
+**Filters**: `CIColorCube` for LUTs (primary), custom `MTKView` + Metal Shading Language (port from recovered GLSL)
+**Overlays**: `CALayer` / `UIImage` for stickers and vignettes
+**Fonts**: Gotham-Bold, Gilroy for UI text
+
+## Staging Rule
+
+All decompiled output, extracted assets, and scratch work go to `C:\Users\Admin\AppData\Local\Temp\opencode\ios-camera-assets\`. Never write scratch files to `D:\learn` except the final `AGENTS.md` and the iOS project.

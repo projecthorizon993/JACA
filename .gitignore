@@ -1,0 +1,23 @@
+# Xcode
+*.xcuserstate
+.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+*.ipa
+*.dSYM/
+*.app/
+Podfile.lock/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# CocoaPods
+Pods/
+
+# Temp build artifacts
+.build/
+
+# Swift
+*.swiftpm
