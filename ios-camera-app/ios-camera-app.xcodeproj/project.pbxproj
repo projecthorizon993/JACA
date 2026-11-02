@@ -502,7 +502,7 @@
 				<key>developmentRegion</key>
 				<string>en</string>
 				<key>hasScannedForEncodings</key>
-				<integer>0</string>
+				<integer>0</integer>
 				<key>knownRegions</key>
 				<array>
 					<string>en</string>
@@ -729,7 +729,7 @@
 					<string>XCC2</string>
 				</array>
 				<key>defaultConfigurationIsVisible</key>
-				<integer>0</string>
+				<integer>0</integer>
 				<key>defaultConfigurationName</key>
 				<string>Debug</string>
 			</dict>
