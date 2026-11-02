@@ -169,10 +169,8 @@
 				<dict>
 					<key>CLANG_ENABLE_OBJC_ARC</key>
 					<string>YES</string>
-					<key>CODE_SIGN_IDENTITY</key>
-					<string>Apple Development</string>
 					<key>CODE_SIGN_STYLE</key>
-					<string>Manual</string>
+					<string>Automatic</string>
 					<key>CURRENT_PROJECT_VERSION</key>
 					<string>1</string>
 					<key>DEBUG_INFORMATION_FORMAT</key>
@@ -228,6 +226,58 @@
 				<key>name</key>
 				<string>Debug</string>
 			</dict>
+			<key>XCC2</key>
+			<dict>
+				<key>isa</key>
+				<string>XCBuildConfiguration</string>
+				<key>baseConfigurationReference</key>
+				<string></string>
+				<key>buildSettings</key>
+				<dict>
+					<key>CLANG_ENABLE_OBJC_ARC</key>
+					<string>YES</string>
+					<key>CODE_SIGN_STYLE</key>
+					<string>Automatic</string>
+					<key>CURRENT_PROJECT_VERSION</key>
+					<string>1</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf-with-symbol</string>
+					<key>GCC_NO_COMMON_BLOCKS</key>
+					<string>YES</string>
+					<key>GENERATE_INFOPLIST_FILE</key>
+					<string>NO</string>
+					<key>INFOPLIST_FILE</key>
+					<string>Info.plist</string>
+					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+					<string>17.0</string>
+					<key>MARKETING_VERSION</key>
+					<string>1.0</string>
+					<key>MTL_ENABLE_DEBUG_INFO</key>
+					<string>NO</string>
+					<key>MTL_FAST_MATH</key>
+					<string>YES</string>
+					<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+					<string>com.yourcompany.ios-camera-app</string>
+					<key>PRODUCT_NAME</key>
+					<string>ios-camera-app</string>
+					<key>SUPPORTED_PLATFORMS</key>
+					<array>
+						<string>iphoneos</string>
+						<string>iphonesimulator</string>
+					</array>
+					<key>SWIFT_VERSION</key>
+					<string>5.0</string>
+					<key>TARGETED_DEVICE_FAMILY</key>
+					<array>
+						<string>1</string>
+						<string>2</string>
+					</array>
+					<key>VALIDATE_PRODUCT</key>
+					<string>YES</string>
+				</dict>
+				<key>name</key>
+				<string>Release</string>
+			</dict>
 		</dict>
 		<key>XCConfigurationList</key>
 		<dict>
@@ -238,6 +288,7 @@
 				<key>buildConfigurations</key>
 				<array>
 					<string>1</string>
+					<string>2</string>
 				</array>
 				<key>defaultConfigurationIsVisible</key>
 				<integer>0</integer>
