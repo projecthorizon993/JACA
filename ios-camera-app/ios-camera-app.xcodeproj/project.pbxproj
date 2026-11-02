@@ -185,7 +185,9 @@
 						<string>$(inherited)</string>
 					</array>
 					<key>GENERATE_INFOPLIST_FILE</key>
-					<string>YES</string>
+					<string>NO</string>
+					<key>INFOPLIST_FILE</key>
+					<string>Info.plist</string>
 					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 					<string>17.0</string>
 					<key>MACOSX_DEPLOYMENT_TARGET</key>
@@ -238,7 +240,7 @@
 					<string>1</string>
 				</array>
 				<key>defaultConfigurationIsVisible</key>
-				<integer>0</string>
+				<integer>0</integer>
 				<key>defaultConfigurationName</key>
 				<string>Debug</string>
 			</dict>
