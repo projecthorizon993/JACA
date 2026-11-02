@@ -95,24 +95,50 @@ Stage all assets to `C:\Users\Admin\AppData\Local\Temp\opencode\ios-camera-asset
 | GLSL shaders (`frag_tex.sh`, `vertex_tex.sh`, etc.) | Port GLSL → Metal Shading Language (MSL) |
 | `M_SenseME_Action_5.2.12.model` (3.6MB) | Core ML action detection (if convertible) |
 
-## iOS Camera App (UIKit, iPhone) — To Be Scaffolded
+## iOS Camera App (SwiftUI + UIKit, iPhone 17+)
 
-Target: iPhone, UIKit, AVFoundation capture + Metal/Core Image filter pipeline.
+**UI kit**: CameraKit (SwiftUI, from `CameraKit.zip` AGENT_BRIEF.md) integrated into `ios-camera-app/CameraKit/`
 
-Planned structure:
+Structure:
 ```
 ios-camera-app/
-├── CameraViewController.swift    # AVCaptureSession setup
-├── FilterPipeline.swift          # CIColorCube LUT + Metal fallback
+├── AppDelegate.swift             # App entry, preloads LUTs
+├── SceneDelegate.swift           # Sets CameraViewController as root
+├── CameraViewController.swift    # UIHostingController wrapping CameraKit CameraScreen
+├── CameraKit/
+│   ├── Tokens.swift              # CKColor, CKFont, CKMetrics, CKShape (design tokens)
+│   ├── Motion.swift              # CKMotion curves, transitions, PressScaleStyle
+│   ├── Controls.swift            # ShutterButton, RoundButton, RawChip, ModeKey, ThumbnailButton, TopBar
+│   ├── DialRuler.swift           # DialMath, DialRuler, ExposureBar, FocusRow
+│   ├── Overlays.swift            # GridOverlay, HistogramPanel, PeakingOverlay, ViewfinderTools
+│   ├── CameraModel.swift         # @Observable CameraModel, CameraEngine protocol, MockHistogram
+│   ├── CameraScreen.swift        # Assembled screen + previews
+│   └── RealCameraEngine.swift    # AVFoundation behind CameraEngine (ISO/shutter/focus/zoom/capture)
+├── FilterPipeline.swift          # CIColorCube LUT + CIColorControls + CIColorMatrix + CISharpenLuminance
 ├── LUTManager.swift              # Load LUT PNGs from asset bundle
 ├── StickerOverlayView.swift      # CALayer-based sticker overlays
 ├── FilmGrainView.swift           # Noise texture from film_grain_small.bin
-├── Assets.xcassets               # Extracted fonts, LUTs, overlays
-└── Info.plist                    # Camera + microphone permissions
+├── Info.plist                    # Camera + microphone permissions
+├── Main.storyboard / LaunchScreen.storyboard
+└── Assets.xcassets               # Extracted fonts, LUTs, overlays, film grain
 ```
 
-**Capture**: `AVFoundation` (`AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput`)
-**Filters**: `CIColorCube` for LUTs (primary), custom `MTKView` + Metal Shading Language (port from recovered GLSL)
+**Capture**: `AVFoundation` via `RealCameraEngine` (`AVCaptureSession`, `AVCaptureDevice`, `AVCaptureVideoDataOutput`, `AVCapturePhotoOutput`)
+
+**Modes** (CameraKit):
+- **Photo** (A): exposure rulers visible, LUT filters + color adjustments
+- **Video**: video recording via `AVCaptureMovieFileOutput`
+- **Pro** (M): minimal UI, manual ISO (50-3200), shutter (1-1/8000s), focus distance (0-2m), white balance (2800-7000K)
+
+**Filters** (ported from decompiled Android APKs — OnePlus, Vivo, Xiaomi):
+- `CIColorCube` for LUTs (from Vivo `CameraLookupTableRenderNode` / OnePlus `libOplusFilterLUTJni.so`)
+- `CIColorControls` for brightness/contrast/saturation
+- `CIColorMatrix` for temperature (2000-10000K) and tint (green-magenta)
+- `CISharpenLuminance` for sharpness
+- Film grain from `film_grain_small.bin`
+
+**Histogram**: 48-bin luminance histogram computed per frame from `AVCaptureVideoDataOutput`
+
 **Overlays**: `CALayer` / `UIImage` for stickers and vignettes
 **Fonts**: Gotham-Bold, Gilroy for UI text
 
