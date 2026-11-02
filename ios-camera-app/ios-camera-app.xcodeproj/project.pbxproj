@@ -699,10 +699,6 @@
 				<dict>
 					<key>CLANG_ENABLE_OBJC_ARC</key>
 					<string>YES</string>
-					<key>CODE_SIGN_IDENTITY</key>
-					<string>Apple Development</string>
-					<key>CODE_SIGN_STYLE</key>
-					<string>Manual</string>
 					<key>CURRENT_PROJECT_VERSION</key>
 					<string>1</string>
 					<key>DEBUG_INFORMATION_FORMAT</key>
@@ -732,8 +728,6 @@
 					<string>com.yourcompany.ios-camera-app</string>
 					<key>PRODUCT_NAME</key>
 					<string>ios-camera-app</string>
-					<key>SDKROOT</key>
-					<string>iphoneos</string>
 					<key>SUPPORTED_PLATFORMS</key>
 					<array>
 						<string>iphoneos</string>
@@ -766,10 +760,6 @@
 				<dict>
 					<key>CLANG_ENABLE_OBJC_ARC</key>
 					<string>YES</string>
-					<key>CODE_SIGN_IDENTITY</key>
-					<string>Apple Development</string>
-					<key>CODE_SIGN_STYLE</key>
-					<string>Manual</string>
 					<key>CURRENT_PROJECT_VERSION</key>
 					<string>1</string>
 					<key>DEBUG_INFORMATION_FORMAT</key>
@@ -792,8 +782,6 @@
 					<string>com.yourcompany.ios-camera-app</string>
 					<key>PRODUCT_NAME</key>
 					<string>ios-camera-app</string>
-					<key>SDKROOT</key>
-					<string>iphoneos</string>
 					<key>SUPPORTED_PLATFORMS</key>
 					<array>
 						<string>iphoneos</string>
