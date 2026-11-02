@@ -2,9 +2,9 @@ name: iOS CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -15,33 +15,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Select Xcode version
-        run: sudo xcode-select -switch /Applications/Xcode_15.0.app
-
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Install CocoaPods (if needed)
+      - name: Build iOS app (Debug, Simulator)
         run: |
-          if [ -f ios-camera-app/Podfile ]; then
-            gem install cocoapods
-            cd ios-camera-app && pod install
-          fi
-
-      - name: Build iOS app (Debug)
-        run: |
-          xcodebuild -workspace ios-camera-app/ios-camera-app.xcworkspace \
+          xcodebuild -project ios-camera-app/ios-camera-app.xcodeproj \
             -scheme ios-camera-app \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
             build
 
-      - name: Build iOS app (Release)
+      - name: Build iOS app (Release, Device)
         run: |
-          xcodebuild -workspace ios-camera-app/ios-camera-app.xcworkspace \
+          xcodebuild -project ios-camera-app/ios-camera-app.xcodeproj \
             -scheme ios-camera-app \
             -configuration Release \
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
             build
+
+      - name: Analyze for issues
+        run: |
+          xcodebuild -project ios-camera-app/ios-camera-app.xcodeproj \
+            -scheme ios-camera-app \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            analyze
