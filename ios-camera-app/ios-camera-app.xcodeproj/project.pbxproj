@@ -12,12 +12,12 @@
 	<dict>
 		<key>PBXBuildFile</key>
 		<dict>
-			<key>1</key>
+			<key>BF1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXBuildFile</string>
 				<key>fileRef</key>
-				<string>2</string>
+				<string>FR1</string>
 				<key>settings</key>
 				<dict/>
 			</dict>
@@ -26,7 +26,7 @@
 		<dict/>
 		<key>PBXFileReference</key>
 		<dict>
-			<key>1</key>
+			<key>FR1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXFileReference</string>
@@ -37,7 +37,7 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>2</key>
+			<key>FR2</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXFileReference</string>
@@ -51,7 +51,7 @@
 		</dict>
 		<key>PBXFrameworksBuildPhase</key>
 		<dict>
-			<key>1</key>
+			<key>BP1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXFrameworksBuildPhase</string>
@@ -65,30 +65,44 @@
 		</dict>
 		<key>PBXGroup</key>
 		<dict>
-			<key>1</key>
+			<key>GR1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXGroup</string>
 				<key>children</key>
 				<array>
-					<string>1</string>
+					<string>FR1</string>
+					<string>GR2</string>
 				</array>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>GR2</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>children</key>
+				<array>
+					<string>FR2</string>
+				</array>
+				<key>name</key>
+				<string>Products</string>
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
 		</dict>
 		<key>PBXNativeTarget</key>
 		<dict>
-			<key>1</key>
+			<key>NT1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXNativeTarget</string>
 				<key>buildConfigurationList</key>
-				<string>2</string>
+				<string>CL1</string>
 				<key>buildPhases</key>
 				<array>
-					<string>3</string>
-					<string>4</string>
+					<string>BS1</string>
+					<string>BP1</string>
 				</array>
 				<key>buildRules</key>
 				<array/>
@@ -99,14 +113,14 @@
 				<key>productName</key>
 				<string>ios-camera-app</string>
 				<key>productReference</key>
-				<string>2</string>
+				<string>FR2</string>
 				<key>productType</key>
 				<string>com.apple.product-type.application</string>
 			</dict>
 		</dict>
 		<key>PBXProject</key>
 		<dict>
-			<key>1</key>
+			<key>PR1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXProject</string>
@@ -116,7 +130,7 @@
 					<integer>1500</integer>
 				</dict>
 				<key>buildConfigurationList</key>
-				<string>2</string>
+				<string>CL1</string>
 				<key>compatibilityVersion</key>
 				<string>Xcode 15.0</string>
 				<key>developmentRegion</key>
@@ -128,22 +142,22 @@
 					<string>en</string>
 				</array>
 				<key>mainGroup</key>
-				<string>1</string>
+				<string>GR1</string>
 				<key>productRefGroup</key>
-				<string>1</string>
+				<string>GR2</string>
 				<key>projectDirPath</key>
 				<string></string>
 				<key>projectRoot</key>
 				<string></string>
 				<key>targets</key>
 				<array>
-					<string>1</string>
+					<string>NT1</string>
 				</array>
 			</dict>
 		</dict>
 		<key>PBXSourcesBuildPhase</key>
 		<dict>
-			<key>1</key>
+			<key>BS1</key>
 			<dict>
 				<key>isa</key>
 				<string>PBXSourcesBuildPhase</string>
@@ -151,7 +165,7 @@
 				<integer>2147483647</integer>
 				<key>files</key>
 				<array>
-					<string>1</string>
+					<string>BF1</string>
 				</array>
 				<key>runOnlyForDeploymentPostprocessing</key>
 				<integer>0</integer>
@@ -159,7 +173,7 @@
 		</dict>
 		<key>XCBuildConfiguration</key>
 		<dict>
-			<key>1</key>
+			<key>XCC1</key>
 			<dict>
 				<key>isa</key>
 				<string>XCBuildConfiguration</string>
@@ -226,16 +240,73 @@
 				<key>name</key>
 				<string>Debug</string>
 			</dict>
+			<key>XCC2</key>
+			<dict>
+				<key>isa</key>
+				<string>XCBuildConfiguration</string>
+				<key>baseConfigurationReference</key>
+				<string></string>
+				<key>buildSettings</key>
+				<dict>
+					<key>CLANG_ENABLE_OBJC_ARC</key>
+					<string>YES</string>
+					<key>CODE_SIGN_IDENTITY</key>
+					<string>Apple Development</string>
+					<key>CODE_SIGN_STYLE</key>
+					<string>Manual</string>
+					<key>CURRENT_PROJECT_VERSION</key>
+					<string>1</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf-with-symbol</string>
+					<key>GCC_NO_COMMON_BLOCKS</key>
+					<string>YES</string>
+					<key>GENERATE_INFOPLIST_FILE</key>
+					<string>YES</string>
+					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+					<string>17.0</string>
+					<key>MACOSX_DEPLOYMENT_TARGET</key>
+					<string>14.0</string>
+					<key>MARKETING_VERSION</key>
+					<string>1.0</string>
+					<key>MTL_ENABLE_DEBUG_INFO</key>
+					<string>NO</string>
+					<key>MTL_FAST_MATH</key>
+					<string>YES</string>
+					<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+					<string>com.yourcompany.ios-camera-app</string>
+					<key>PRODUCT_NAME</key>
+					<string>ios-camera-app</string>
+					<key>SDKROOT</key>
+					<string>iphoneos</string>
+					<key>SUPPORTED_PLATFORMS</key>
+					<array>
+						<string>iphoneos</string>
+						<string>iphonesimulator</string>
+					</array>
+					<key>SWIFT_VERSION</key>
+					<string>5.0</string>
+					<key>TARGETED_DEVICE_FAMILY</key>
+					<array>
+						<string>1</string>
+						<string>2</string>
+					</array>
+					<key>VALIDATE_PRODUCT</key>
+					<string>YES</string>
+				</dict>
+				<key>name</key>
+				<string>Release</string>
+			</dict>
 		</dict>
 		<key>XCConfigurationList</key>
 		<dict>
-			<key>2</key>
+			<key>CL1</key>
 			<dict>
 				<key>isa</key>
 				<string>XCConfigurationList</string>
 				<key>buildConfigurations</key>
 				<array>
-					<string>1</string>
+					<string>XCC1</string>
+					<string>XCC2</string>
 				</array>
 				<key>defaultConfigurationIsVisible</key>
 				<integer>0</string>
@@ -245,6 +316,6 @@
 		</dict>
 	</dict>
 	<key>rootObject</key>
-	<string>1</string>
+	<string>PR1</string>
 </dict>
 </plist>
