@@ -10,8 +10,8 @@ This repository contains compiled Android camera APK/XAPK binaries, **not** sour
 | `oneplus.apk` | 5.5 KB | Stub (not the camera app) |
 | `vivo-camera-12.1.15.602.apk` | ~201 MB | Vivo camera app — **decompiled** |
 | `vivo-13.5.8.0.apk` | ~189 MB | Vivo camera app — **decompiled** |
-| `vivo.apk` | ~293 MB | Camera app — not yet decompiled |
-| `xiaomi.apk` | ~199 MB | Camera app — not yet decompiled |
+| `vivo.apk` | ~293 MB | Camera app — decompiling in background |
+| `xiaomi.apk` | ~199 MB | Xiaomi camera app — **decompiled** (22,140 Java files) |
 | `phocus-mobile-1.1.0.xapk` | ~178 MB | Xiaomi/Phocus camera bundle — not yet decompiled |
 | `phocus.xapk` | 5.5 KB | Stub |
 
@@ -119,3 +119,28 @@ ios-camera-app/
 ## Staging Rule
 
 All decompiled output, extracted assets, and scratch work go to `C:\Users\Admin\AppData\Local\Temp\opencode\ios-camera-assets\`. Never write scratch files to `D:\learn` except the final `AGENTS.md` and the iOS project.
+
+## GitHub Repo & CI
+
+**Repo**: JACA (Just Another Camera App) — create at github.com, then:
+
+```powershell
+git remote add origin https://github.com/<your-username>/JACA.git
+git branch -M main
+git push -u origin main
+```
+
+**CI**: `.github/workflows/ios-ci.yml` runs on macOS-latest with Xcode 15:
+- Builds Debug (iphonesimulator, iPhone 15) and Release (iphoneos, generic device)
+- Cannot compile on this Windows machine — CI is the build path
+- If a Podfile exists, CocoaPods install runs before build
+
+**To compile locally** (macOS only):
+```bash
+xcodebuild -workspace ios-camera-app/ios-camera-app.xcworkspace \
+  -scheme ios-camera-app \
+  -configuration Debug \
+  -sdk iphonesimulator \
+  -destination 'platform=iOS Simulator,name=iPhone 15' \
+  build
+```
