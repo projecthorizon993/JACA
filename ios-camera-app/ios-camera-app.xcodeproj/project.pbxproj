@@ -91,10 +91,7 @@
 				<key>fileRef</key>
 				<string>FR10</string>
 				<key>settings</key>
-				<dict>
-					<key>COMPILER_FLAGS</key>
-					<string>-x objective-c++</string>
-				</dict>
+				<dict/>
 			</dict>
 			<key>BF10</key>
 			<dict>
