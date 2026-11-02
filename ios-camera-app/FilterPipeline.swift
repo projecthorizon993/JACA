@@ -15,6 +15,7 @@ import CoreImage
 import CoreVideo
 import Accelerate
 import Metal
+import OpenGLES
 
 /// Filter pipeline with optional GPU Metal backend.
 /// Ported from decompiled Android camera apps:
