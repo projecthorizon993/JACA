@@ -70,19 +70,22 @@ class FilterPipeline {
         // 1. Apply LUT-based filter (ported from Vivo LUT pipeline)
         filtered = applyLUTFilter(to: filtered, settings: settings)
 
-        // 2. Apply color adjustments (brightness, contrast, saturation)
+        // 2. Apply Leica color profile (ported from Xiaomi/Leica collaboration)
+        filtered = applyLeicaColorProfile(to: filtered, profile: settings.leicaProfile)
+
+        // 3. Apply color adjustments (brightness, contrast, saturation)
         filtered = applyColorControls(to: filtered, adjustment: settings.color)
 
-        // 3. Apply temperature and tint (white balance)
+        // 4. Apply temperature and tint (white balance)
         filtered = applyTemperatureTint(to: filtered, adjustment: settings.color)
 
-        // 4. Apply sharpening
+        // 5. Apply sharpening
         filtered = applySharpen(to: filtered, sharpness: settings.color.sharpness)
 
-        // 5. Apply film grain
+        // 6. Apply film grain
         filtered = applyFilmGrain(to: filtered, intensity: settings.intensity * 0.15)
 
-        // 6. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        // 7. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
             filtered = WatermarkManager.applyToPixelBuffer(
                 pixelBuffer,
@@ -178,6 +181,77 @@ class FilterPipeline {
         blend.setValue(grain, forKey: kCIInputMaskImageKey)
         blend.setValue(intensity, forKey: kCIInputIntensityKey)
         return blend.outputImage ?? image
+    }
+
+    // MARK: - Leica Color Profile (ported from Xiaomi/Leica color science)
+
+    /// Leica color profiles:
+    /// - Leica Classic: Warm, slightly desaturated, rich blacks, natural skin tones
+    /// - Leica Vivid: Saturated colors, punchy contrast, cooler highlights
+    /// - Leica B&W: Monochrome with Leica tonal curve
+    private func applyLeicaColorProfile(to image: CIImage, profile: LeicaColorProfile) -> CIImage {
+        switch profile {
+        case .off:
+            return image
+
+        case .leicaClassic:
+            // Leica Classic: warm, slightly desaturated, rich blacks
+            // Color matrix: slight red/yellow shift, reduced saturation, lifted blacks
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return image }
+            matrix.setValue(image, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 1.05, y: 0.0, z: 0.0, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.95, z: 0.0, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.90, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: 0.01, y: 0.005, z: 0.0, w: 0.0), forKey: "inputBiasVector")
+            guard let result = matrix.outputImage else { return image }
+
+            // Slight contrast boost
+            guard let controls = CIFilter(name: "CIColorControls") else { return result }
+            controls.setValue(result, forKey: kCIInputImageKey)
+            controls.setValue(0.90, forKey: kCIInputSaturationKey)
+            controls.setValue(1.10, forKey: kCIInputContrastKey)
+            controls.setValue(0.02, forKey: kCIInputBrightnessKey)
+            return controls.outputImage ?? result
+
+        case .leicaVivid:
+            // Leica Vivid: saturated colors, punchy contrast, cooler highlights
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return image }
+            matrix.setValue(image, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 1.10, y: 0.0, z: 0.0, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.0, y: 1.05, z: 0.0, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.95, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: -0.01, y: -0.01, z: 0.01, w: 0.0), forKey: "inputBiasVector")
+            guard let result = matrix.outputImage else { return image }
+
+            // Higher saturation and contrast
+            guard let controls = CIFilter(name: "CIColorControls") else { return result }
+            controls.setValue(result, forKey: kCIInputImageKey)
+            controls.setValue(1.25, forKey: kCIInputSaturationKey)
+            controls.setValue(1.15, forKey: kCIInputContrastKey)
+            controls.setValue(0.0, forKey: kCIInputBrightnessKey)
+            return controls.outputImage ?? result
+
+        case .leicaBw:
+            // Leica B&W: monochrome with Leica tonal curve
+            guard let bw = CIFilter(name: "CIColorControls") else { return image }
+            bw.setValue(image, forKey: kCIInputImageKey)
+            bw.setValue(0.0, forKey: kCIInputSaturationKey)
+            bw.setValue(1.20, forKey: kCIInputContrastKey)
+            bw.setValue(0.05, forKey: kCIInputBrightnessKey)
+            guard let result = bw.outputImage else { return image }
+
+            // Slight warm tone in the B&W (Leica monochrome character)
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return result }
+            matrix.setValue(result, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: 0.02, y: 0.02, z: 0.02, w: 0.0), forKey: "inputBiasVector")
+            return matrix.outputImage ?? result
+        }
     }
 
     // MARK: - Render

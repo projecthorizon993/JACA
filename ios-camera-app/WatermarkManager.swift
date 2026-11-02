@@ -3,12 +3,13 @@
 //  ios-camera-app
 //
 //  Watermark system ported from decompiled Android camera apps:
-//  - Xiaomi: assets/watermarks/leica/* (Leica signature watermarks)
+//  - Xiaomi: assets/watermarks/leica/* (Leica signature + logo watermarks)
 //  - Xiaomi: assets/watermarks/classic/17/* (brand logo + EXIF watermarks)
 //  - OnePlus: com.oplus.camera.watermark.OplusWatermark (JNI-based watermark processing)
 //  - Vivo: assets/vlogeffect/tail/* (video end-screen watermarks)
 //
 //  Watermark assets are stored in Assets.xcassets/Watermarks.imageset/
+//  "Shot on iPhone" watermark is generated programmatically (Apple branding).
 //
 
 import UIKit
@@ -18,10 +19,12 @@ import CoreImage
 enum WatermarkStyle: String, CaseIterable {
     case off = "Off"
     case leicaSignature = "Leica Signature"
+    case leicaLogo = "Leica Logo"
     case xiaomiBrand = "Xiaomi Brand"
     case pocoBrand = "POCO Brand"
     case redmiBrand = "Redmi Brand"
     case vivoTail = "Vivo Tail"
+    case shotOnIPhone = "Shot on iPhone"
 }
 
 enum WatermarkPosition: String, CaseIterable {
@@ -51,6 +54,45 @@ class WatermarkManager {
         return cgImage
     }
 
+    /// Generate a "Shot on iPhone" text watermark image programmatically.
+    static func generateShotOnIPhoneWatermark(size: CGSize) -> CGImage? {
+        let text = "Shot on iPhone"
+        let fontSize: CGFloat = min(size.width, size.height) * 0.12
+        let font = UIFont.systemFont(ofSize: fontSize, weight: .medium)
+
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.white,
+            .strokeColor: UIColor.black,
+            .strokeWidth: -2.0
+        ]
+
+        let textSize = text.size(withAttributes: textAttributes)
+        let bgSize = CGSize(width: textSize.width + 20, height: textSize.height + 10)
+
+        UIGraphicsBeginImageContextWithOptions(bgSize, false, 0.0)
+        defer { UIGraphicsEndImageContext() }
+
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+
+        // Draw semi-transparent black rounded background
+        let bgRect = CGRect(origin: .zero, size: bgSize)
+        context.setFillColor(UIColor.black.cgColor)
+        context.setAlpha(0.5)
+        context.fill(bgRect)
+
+        // Draw text
+        let textRect = CGRect(
+            x: (bgSize.width - textSize.width) / 2,
+            y: (bgSize.height - textSize.height) / 2,
+            width: textSize.width,
+            height: textSize.height
+        )
+        text.draw(in: textRect, withAttributes: textAttributes)
+
+        return UIGraphicsGetImageFromCurrentImageContext()?.cgImage
+    }
+
     /// Apply a watermark to a UIImage. Returns the composited image.
     static func applyWatermark(
         to image: UIImage,
@@ -61,10 +103,23 @@ class WatermarkManager {
     ) -> UIImage {
         guard style != .off else { return image }
 
+        // "Shot on iPhone" is generated programmatically (not an image asset)
+        if style == .shotOnIPhone {
+            return applyTextWatermark(
+                to: image,
+                text: "Shot on iPhone",
+                position: position,
+                opacity: opacity,
+                scale: scale
+            )
+        }
+
         let watermarkName: String
         switch style {
         case .leicaSignature:
             watermarkName = "wm_leica_signature_white"
+        case .leicaLogo:
+            watermarkName = "wm_leica_logo"
         case .xiaomiBrand:
             watermarkName = "wm_xiaomi_white"
         case .pocoBrand:
@@ -75,6 +130,8 @@ class WatermarkManager {
             watermarkName = "wm_vivo_tail"
         case .off:
             return image
+        case .shotOnIPhone:
+            return image // handled above
         }
 
         guard let watermarkCG = loadWatermark(named: watermarkName) else {
@@ -131,6 +188,78 @@ class WatermarkManager {
         return result
     }
 
+    /// Apply a text-based watermark (e.g. "Shot on iPhone") to a UIImage.
+    private static func applyTextWatermark(
+        to image: UIImage,
+        text: String,
+        position: WatermarkPosition,
+        opacity: Float,
+        scale: Float
+    ) -> UIImage {
+        let fontSize: CGFloat = min(image.size.width, image.size.height) * CGFloat(scale) * 0.08
+        let font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.white,
+            .strokeColor: UIColor.black,
+            .strokeWidth: -2.0
+        ]
+
+        let textSize = text.size(withAttributes: textAttributes)
+        let bgSize = CGSize(width: textSize.width + 20, height: textSize.height + 10)
+
+        // Calculate position
+        let positionRect: CGRect
+        switch position {
+        case .bottomRight:
+            positionRect = CGRect(
+                x: image.size.width - bgSize.width - 20,
+                y: image.size.height - bgSize.height - 20,
+                width: bgSize.width,
+                height: bgSize.height
+            )
+        case .bottomLeft:
+            positionRect = CGRect(x: 20, y: image.size.height - bgSize.height - 20, width: bgSize.width, height: bgSize.height)
+        case .topRight:
+            positionRect = CGRect(x: image.size.width - bgSize.width - 20, y: 20, width: bgSize.width, height: bgSize.height)
+        case .topLeft:
+            positionRect = CGRect(x: 20, y: 20, width: bgSize.width, height: bgSize.height)
+        case .center:
+            positionRect = CGRect(
+                x: (image.size.width - bgSize.width) / 2,
+                y: (image.size.height - bgSize.height) / 2,
+                width: bgSize.width,
+                height: bgSize.height
+            )
+        }
+
+        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
+        defer { UIGraphicsEndImageContext() }
+
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+
+        // Draw semi-transparent black background
+        let context = UIGraphicsGetCurrentContext()
+        context?.saveGState()
+        context?.setFillColor(UIColor.black.cgColor)
+        context?.setAlpha(0.4 * CGFloat(opacity))
+        context?.fill(positionRect)
+
+        // Draw text with white color and black outline
+        let textRect = CGRect(
+            x: positionRect.origin.x + 10,
+            y: positionRect.origin.y + 5,
+            width: textSize.width,
+            height: textSize.height
+        )
+        text.draw(in: textRect, withAttributes: textAttributes)
+        context?.restoreGState()
+
+        let result = UIGraphicsGetImageFromCurrentImageContext() ?? image
+        return result
+    }
+
     /// Apply watermark to a CVPixelBuffer (used during capture).
     static func applyToPixelBuffer(
         _ pixelBuffer: CVPixelBuffer,
@@ -143,14 +272,31 @@ class WatermarkManager {
         guard style != .off else { return CIImage(cvPixelBuffer: pixelBuffer) }
 
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+
+        // "Shot on iPhone" text watermark - render as CIImage overlay
+        if style == .shotOnIPhone {
+            let uiImage = UIImage(cvPixelBuffer: pixelBuffer)
+            let watermarked = applyTextWatermark(
+                to: uiImage,
+                text: "Shot on iPhone",
+                position: position,
+                opacity: opacity,
+                scale: scale
+            )
+            guard let cgImage = watermarked.cgImage else { return ciImage }
+            return CIImage(cgImage: cgImage)
+        }
+
         let watermarkName: String
         switch style {
         case .leicaSignature: watermarkName = "wm_leica_signature_white"
+        case .leicaLogo: watermarkName = "wm_leica_logo"
         case .xiaomiBrand: watermarkName = "wm_xiaomi_white"
         case .pocoBrand: watermarkName = "wm_poco_white"
         case .redmiBrand: watermarkName = "wm_redmi_white"
         case .vivoTail: watermarkName = "wm_vivo_tail"
         case .off: return ciImage
+        case .shotOnIPhone: return ciImage // handled above
         }
 
         guard let watermarkCG = loadWatermark(named: watermarkName) else {
@@ -211,4 +357,33 @@ struct WatermarkSettings {
     var opacity: Float = 0.8
     var scale: Float = 0.15
     var isEnabled: Bool = false
+    var leicaProfile: LeicaColorProfile = .off
+}
+
+/// Filter settings for the filter pipeline
+struct FilterSettings {
+    var lut: CGImage?
+    var intensity: Float = 1.0
+    var type: Int = 0  // filter segment index
+    var color: ColorAdjustment = ColorAdjustment()
+    var leicaProfile: LeicaColorProfile = .off
+}
+
+/// Color adjustment parameters
+struct ColorAdjustment {
+    var brightness: Float = 0.0    // -1.0 to 1.0
+    var contrast: Float = 1.0      // 0.0 to 2.0
+    var saturation: Float = 1.0    // 0.0 to 2.0
+    var temperature: Float = 6500.0 // 2000 to 10000 Kelvin
+    var tint: Float = 0.0          // -1.0 to 1.0 (green to magenta)
+    var sharpness: Float = 0.0     // 0.0 to 1.0
+}
+
+/// Pro camera settings
+struct ProSettings {
+    var iso: Float = 100.0         // ISO sensitivity
+    var shutterSpeed: Float = 1.0 / 30.0 // seconds
+    var focusDistance: Float = 0.0  // 0.0 to 1.0 (macro to infinity)
+    var whiteBalance: Float = 5500.0  // Kelvin
+    var exposureCompensation: Float = 0.0 // -4.0 to 4.0 EV
 }

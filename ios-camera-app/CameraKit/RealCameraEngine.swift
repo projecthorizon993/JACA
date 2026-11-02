@@ -48,6 +48,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     /// Current watermark settings applied to preview and capture.
     var currentWatermark: WatermarkSettings = WatermarkSettings()
 
+    /// Current Leica color profile applied to preview and capture.
+    var currentLeicaProfile: LeicaColorProfile = .off
+
     // MARK: - Initialization
 
     override init() {
@@ -215,19 +218,30 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate { [weak self] result in
                 switch result {
                 case .success(let image):
-                    // Apply watermark to captured photo if enabled
-                    var finalImage = image
+                    // Apply Leica color profile + watermark to captured photo
+                    let uiImage = UIImage(image: image)
+                    var processedImage = uiImage
+
+                    // Apply Leica color profile via CIFilter (ported from Xiaomi/Leica color science)
+                    if let ciImage = CIImage(image: uiImage) {
+                        let leicaProfile = watermark.leicaProfile ?? .off
+                        if leicaProfile != .off {
+                            processedImage = self?.applyLeicaColorProfile(to: ciImage, profile: leicaProfile) ?? uiImage
+                        }
+                    }
+
+                    // Apply watermark if enabled
                     if watermark.isEnabled {
-                        let uiImage = UIImage(image: image)
-                        let watermarked = WatermarkManager.applyWatermark(
-                            to: uiImage,
+                        processedImage = WatermarkManager.applyWatermark(
+                            to: processedImage,
                             style: watermark.style,
                             position: watermark.position,
                             opacity: watermark.opacity,
                             scale: watermark.scale
                         )
-                        finalImage = Image(uiImage: watermarked)
                     }
+
+                    finalImage = Image(uiImage: processedImage)
 
                     // Save to photo library
                     self?.saveToPhotoLibrary(image: finalImage) { saveResult in
@@ -244,6 +258,72 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
                 }
             })
         }
+    }
+
+    /// Apply Leica color profile to a CIImage (used for captured photos).
+    private func applyLeicaColorProfile(to ciImage: CIImage, profile: LeicaColorProfile) -> UIImage {
+        var result = ciImage
+
+        switch profile {
+        case .leicaClassic:
+            // Leica Classic: warm, slightly desaturated, rich blacks
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return UIImage(ciImage: result) }
+            matrix.setValue(result, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 1.05, y: 0.0, z: 0.0, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.95, z: 0.0, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.90, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: 0.01, y: 0.005, z: 0.0, w: 0.0), forKey: "inputBiasVector")
+            guard let mResult = matrix.outputImage else { return UIImage(ciImage: result) }
+
+            guard let controls = CIFilter(name: "CIColorControls") else { return UIImage(ciImage: mResult) }
+            controls.setValue(mResult, forKey: kCIInputImageKey)
+            controls.setValue(0.90, forKey: kCIInputSaturationKey)
+            controls.setValue(1.10, forKey: kCIInputContrastKey)
+            controls.setValue(0.02, forKey: kCIInputBrightnessKey)
+            result = controls.outputImage ?? mResult
+
+        case .leicaVivid:
+            // Leica Vivid: saturated colors, punchy contrast, cooler highlights
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return UIImage(ciImage: result) }
+            matrix.setValue(result, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 1.10, y: 0.0, z: 0.0, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.0, y: 1.05, z: 0.0, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.95, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: -0.01, y: -0.01, z: 0.01, w: 0.0), forKey: "inputBiasVector")
+            guard let mResult = matrix.outputImage else { return UIImage(ciImage: result) }
+
+            guard let controls = CIFilter(name: "CIColorControls") else { return UIImage(ciImage: mResult) }
+            controls.setValue(mResult, forKey: kCIInputImageKey)
+            controls.setValue(1.25, forKey: kCIInputSaturationKey)
+            controls.setValue(1.15, forKey: kCIInputContrastKey)
+            controls.setValue(0.0, forKey: kCIInputBrightnessKey)
+            result = controls.outputImage ?? mResult
+
+        case .leicaBw:
+            // Leica B&W: monochrome with Leica tonal curve
+            guard let bw = CIFilter(name: "CIColorControls") else { return UIImage(ciImage: result) }
+            bw.setValue(result, forKey: kCIInputImageKey)
+            bw.setValue(0.0, forKey: kCIInputSaturationKey)
+            bw.setValue(1.20, forKey: kCIInputContrastKey)
+            bw.setValue(0.05, forKey: kCIInputBrightnessKey)
+            guard let mResult = bw.outputImage else { return UIImage(ciImage: result) }
+
+            guard let matrix = CIFilter(name: "CIColorMatrix") else { return UIImage(ciImage: mResult) }
+            matrix.setValue(mResult, forKey: kCIInputImageKey)
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputRVector")
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputGVector")
+            matrix.setValue(CIVector(x: 0.33, y: 0.33, z: 0.33, w: 0.0), forKey: "inputBVector")
+            matrix.setValue(CIVector(x: 0.0, y: 0.0, z: 0.0, w: 1.0), forKey: "inputAVector")
+            matrix.setValue(CIVector(x: 0.02, y: 0.02, z: 0.02, w: 0.0), forKey: "inputBiasVector")
+            result = matrix.outputImage ?? mResult
+
+        case .off:
+            break
+        }
+
+        return UIImage(ciImage: result)
     }
 
     /// Save a SwiftUI Image to the device photo library.
@@ -276,12 +356,13 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         // Compute 48-bin histogram from luminance
         computeHistogram(from: pixelBuffer)
 
-        // Apply LUT filter pipeline with watermark and dispatch filtered frame to main thread
+        // Apply LUT filter pipeline with Leica color + watermark and dispatch filtered frame to main thread
         let settings = FilterSettings(
             lut: currentLUT,
             intensity: currentLUTIntensity,
             type: currentFilterType,
-            color: ColorAdjustment()
+            color: ColorAdjustment(),
+            leicaProfile: currentLeicaProfile
         )
         let filtered = filterPipeline.apply(
             to: pixelBuffer,

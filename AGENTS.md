@@ -49,6 +49,8 @@ All decompiled output goes to `C:\Users\Admin\AppData\Local\Temp\opencode\` — 
 | oneplus-camera-3.102.28.apk | 1,897 | 10 | `$env:TEMP\oneplus_decompiled` |
 | vivo-camera-12.1.15.602.apk | 7,252 | 10 | `$env:TEMP\vivo12_decompiled` |
 | vivo-13.5.8.0.apk | 13,955 | 101 | `$env:TEMP\vivo13_decompiled` |
+| vivo.apk | 14,691 | 150 | `$env:TEMP\vivo_decompiled` |
+| xiaomi.apk | 22,140 | 155 | `$env:TEMP\xiaomi_decompiled` |
 
 **Non-obfuscated anchor classes** (use as entry points — do not guess obfuscated names):
 
@@ -176,10 +178,19 @@ ios-camera-app/
 | Style | Source | Description |
 |---|---|---|
 | `leicaSignature` | Xiaomi (Leica) | Leica camera signature watermark |
+| `leicaLogo` | Xiaomi (Leica) | Leica camera logo watermark |
 | `xiaomiBrand` | Xiaomi | Xiaomi brand logo watermark |
 | `pocoBrand` | Xiaomi | POCO brand logo watermark |
 | `redmiBrand` | Xiaomi | Redmi brand logo watermark |
 | `vivoTail` | Vivo | Vivo video tail/end-screen watermark |
+| `shotOnIPhone` | Generated | "Shot on iPhone" text watermark (programmatic) |
+
+**Leica Color Profiles** (`LeicaColorProfile`):
+| Profile | Description |
+|---|---|
+| `leicaClassic` | Warm, slightly desaturated, rich blacks, natural skin tones |
+| `leicaVivid` | Saturated colors, punchy contrast, cooler highlights |
+| `leicaBw` | Monochrome with Leica tonal curve |
 
 **Watermark Pipeline**: `WatermarkManager` composites watermark PNGs onto camera frames using `CISourceOverCompositing` with adjustable opacity (0-1) and scale (0.05-0.5). Applied both to live preview (per-frame) and captured photos.
 

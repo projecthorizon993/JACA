@@ -56,6 +56,9 @@ final class CameraModel {
     var watermarkScale: Float = 0.15
     var watermarkEnabled: Bool = false
 
+    /// Leica color profile (Leica color science from Xiaomi/Leica collaboration)
+    var leicaColorProfile: LeicaColorProfile = .off
+
     /// The real camera engine (wires AVFoundation). Set by CameraViewController.
     weak var cameraEngine: (any CameraEngine)?
 
@@ -78,7 +81,8 @@ final class CameraModel {
                         position: watermarkPosition,
                         opacity: watermarkOpacity,
                         scale: watermarkScale,
-                        isEnabled: watermarkEnabled
+                        isEnabled: watermarkEnabled,
+                        leicaProfile: leicaColorProfile
                     )
                 ) ?? Image(systemName: "photo")!
                 await MainActor.run {
@@ -106,10 +110,20 @@ protocol CameraEngine: AnyObject {
 enum WatermarkStyle: String, CaseIterable {
     case off = "Off"
     case leicaSignature = "Leica Signature"
+    case leicaLogo = "Leica Logo"
     case xiaomiBrand = "Xiaomi Brand"
     case pocoBrand = "POCO Brand"
     case redmiBrand = "Redmi Brand"
     case vivoTail = "Vivo Tail"
+    case shotOnIPhone = "Shot on iPhone"
+}
+
+/// Leica color profile (Leica color science ported from Xiaomi/Leica collaboration)
+enum LeicaColorProfile: String, CaseIterable {
+    case off = "Off"
+    case leicaClassic = "Leica Classic"
+    case leicaVivid = "Leica Vivid"
+    case leicaBw = "Leica B&W"
 }
 
 /// Watermark position options
@@ -136,6 +150,7 @@ struct FilterSettings {
     var intensity: Float = 1.0
     var type: Int = 0  // filter segment index
     var color: ColorAdjustment = ColorAdjustment()
+    var leicaProfile: LeicaColorProfile = .off
 }
 
 /// Color adjustment parameters

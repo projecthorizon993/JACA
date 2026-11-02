@@ -29,6 +29,7 @@ class CameraViewController: UIViewController {
     private let watermarkOpacitySlider = UISlider()
     private let watermarkScaleSlider = UISlider()
     private let watermarkToggle = UISwitch()
+    private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
 
     // MARK: - State
 
@@ -103,6 +104,12 @@ class CameraViewController: UIViewController {
         watermarkStyleControl.addTarget(self, action: #selector(watermarkStyleChanged(_:)), for: .valueChanged)
         view.addSubview(watermarkStyleControl)
 
+        // Leica color profile selector
+        leicaColorControl.translatesAutoresizingMaskIntoConstraints = false
+        leicaColorControl.selectedSegmentIndex = 0
+        leicaColorControl.addTarget(self, action: #selector(leicaColorChanged(_:)), for: .valueChanged)
+        view.addSubview(leicaColorControl)
+
         // Watermark position selector
         watermarkPositionControl.translatesAutoresizingMaskIntoConstraints = false
         watermarkPositionControl.selectedSegmentIndex = 1 // Bottom Right
@@ -151,7 +158,12 @@ class CameraViewController: UIViewController {
             watermarkStyleControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             watermarkStyleControl.heightAnchor.constraint(equalToConstant: 32),
 
-            watermarkPositionControl.topAnchor.constraint(equalTo: watermarkStyleControl.bottomAnchor, constant: 6),
+            leicaColorControl.topAnchor.constraint(equalTo: watermarkStyleControl.bottomAnchor, constant: 6),
+            leicaColorControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            leicaColorControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            leicaColorControl.heightAnchor.constraint(equalToConstant: 32),
+
+            watermarkPositionControl.topAnchor.constraint(equalTo: leicaColorControl.bottomAnchor, constant: 6),
             watermarkPositionControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             watermarkPositionControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             watermarkPositionControl.heightAnchor.constraint(equalToConstant: 30),
@@ -242,6 +254,12 @@ class CameraViewController: UIViewController {
         syncWatermarkToEngine()
     }
 
+    @objc private func leicaColorChanged(_ sender: UISegmentedControl) {
+        let profiles = LeicaColorProfile.allCases
+        screen.model.leicaColorProfile = profiles[sender.selectedSegmentIndex]
+        cameraEngine.currentLeicaProfile = profiles[sender.selectedSegmentIndex]
+    }
+
     @objc private func watermarkPositionChanged(_ sender: UISegmentedControl) {
         let positions = WatermarkPosition.allCases
         screen.model.watermarkPosition = positions[sender.selectedSegmentIndex]
@@ -273,8 +291,10 @@ class CameraViewController: UIViewController {
             position: screen.model.watermarkPosition,
             opacity: screen.model.watermarkOpacity,
             scale: screen.model.watermarkScale,
-            isEnabled: screen.model.watermarkEnabled
+            isEnabled: screen.model.watermarkEnabled,
+            leicaProfile: screen.model.leicaColorProfile
         )
+        cameraEngine.currentLeicaProfile = screen.model.leicaColorProfile
     }
 }
 
