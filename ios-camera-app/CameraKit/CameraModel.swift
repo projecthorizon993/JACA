@@ -63,6 +63,8 @@ final class CameraModel {
     var isPanoramaMode: Bool = false   // Panorama mode active
     var slowMotionEnabled: Bool = false   // Slow motion video recording
     var timeLapseEnabled: Bool = false   // Time lapse video recording
+    var mlActionDetectionEnabled: Bool = false   // ML action detection
+    var detectedAction: String = ""   // Detected ML action
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)

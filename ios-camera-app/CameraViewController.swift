@@ -36,6 +36,7 @@ class CameraViewController: UIViewController {
     private let portraitIntensitySlider = UISlider()
     private let nightModeSlider = UISlider()
     private let aiSceneDetectionToggle = UISwitch()
+    private let mlActionDetectionToggle = UISwitch()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -159,6 +160,11 @@ class CameraViewController: UIViewController {
         aiSceneDetectionToggle.addTarget(self, action: #selector(aiSceneDetectionToggled(_:)), for: .valueChanged)
         view.addSubview(aiSceneDetectionToggle)
 
+        // ML action detection toggle
+        mlActionDetectionToggle.translatesAutoresizingMaskIntoConstraints = false
+        mlActionDetectionToggle.addTarget(self, action: #selector(mlActionDetectionToggled(_:)), for: .valueChanged)
+        view.addSubview(mlActionDetectionToggle)
+
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
         flipButton.setImage(UIImage(systemName: "camera.rotate"), for: .normal)
@@ -276,6 +282,10 @@ class CameraViewController: UIViewController {
             aiSceneDetectionToggle.topAnchor.constraint(equalTo: nightModeSlider.bottomAnchor, constant: 6),
             aiSceneDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             aiSceneDetectionToggle.widthAnchor.constraint(equalToConstant: 50),
+
+            mlActionDetectionToggle.topAnchor.constraint(equalTo: aiSceneDetectionToggle.bottomAnchor, constant: 6),
+            mlActionDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mlActionDetectionToggle.widthAnchor.constraint(equalToConstant: 50),
         ])
     }
 
@@ -412,6 +422,11 @@ class CameraViewController: UIViewController {
 
     @objc private func aiSceneDetectionToggled(_ sender: UISwitch) {
         screen.model.aiSceneDetectionEnabled = sender.isOn
+        cameraEngine.cameraModel = screen.model
+    }
+
+    @objc private func mlActionDetectionToggled(_ sender: UISwitch) {
+        screen.model.mlActionDetectionEnabled = sender.isOn
         cameraEngine.cameraModel = screen.model
     }
 
