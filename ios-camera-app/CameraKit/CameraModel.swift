@@ -65,6 +65,7 @@ final class CameraModel {
     var timeLapseEnabled: Bool = false   // Time lapse video recording
     var mlActionDetectionEnabled: Bool = false   // ML action detection
     var detectedAction: String = ""   // Detected ML action
+    var dualCameraEnabled: Bool = false   // Dual camera / dual vision mode
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)

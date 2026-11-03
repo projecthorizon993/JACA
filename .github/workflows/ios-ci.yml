@@ -15,9 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Convert project.pbxproj to JSON plist format
-        run: plutil -convert json ios-camera-app/ios-camera-app.xcodeproj/project.pbxproj
-
       - name: Show Xcode version
         run: xcodebuild -version
 

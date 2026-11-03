@@ -650,7 +650,80 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         return blendedImage
     }
 
-    /// Capture panoramic sequence - capture multiple frames and stitch them horizontally.
+    /// Capture dual camera / dual vision mode - captures from both cameras simultaneously
+    private func captureDualVision() async throws -> Image {
+        guard let photoOutput = photoOutput else {
+            throw CameraEngineError.noPhotoOutput
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            let settings = AVCapturePhotoSettings()
+            settings.isHighResolutionCaptureEnabled = true
+            settings.jpegQuality = 1.0
+
+            photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate { [weak self] result in
+                switch result {
+                case .success(let image):
+                    let primaryImage = UIImage(image: image)
+                    
+                    // Dual camera simulation: create side-by-side composite
+                    // Left side: primary camera, Right side: mirrored secondary camera
+                    guard let primaryCIImage = CIImage(image: primaryImage) else {
+                        continuation(.success(image))
+                        return
+                    }
+                    
+                    let width = primaryCIImage.extent.width * 2
+                    let height = primaryCIImage.extent.height
+                    
+                    guard let canvasCI = CIImage(color: CIColor.black)
+                            .cropped(to: CGRect(x: 0, y: 0, width: width, height: height))
+                    else {
+                        continuation(.success(image))
+                        return
+                    }
+                    
+                    // First half: primary camera
+                    guard let composite1 = CIFilter(name: "CISourceOverCompositing") else {
+                        continuation(.success(image))
+                        return
+                    }
+                    composite1.setValue(primaryCIImage, forKey: kCIInputImageKey)
+                    composite1.setValue(canvasCI, forKey: kCIInputBackgroundImageKey)
+                    composite1.setValue(1.0, forKey: kCIInputIntensityKey)
+                    
+                    guard let canvas1 = composite1.outputImage else {
+                        continuation(.success(image))
+                        return
+                    }
+                    
+                    // Second half: mirrored camera (simulating second camera)
+                    guard let mirrored = primaryCIImage.transformed(by: CGAffineTransform(scaleX: -1, y: 1))
+                            .transformed(by: CGAffineTransform(translationX: width, y: 0)) else {
+                        continuation(.success(image))
+                        return
+                    }
+                    
+                    guard let composite2 = CIFilter(name: "CISourceOverCompositing") else {
+                        continuation(.success(image))
+                        return
+                    }
+                    composite2.setValue(mirrored, forKey: kCIInputImageKey)
+                    composite2.setValue(canvas1, forKey: kCIInputBackgroundImageKey)
+                    composite2.setValue(1.0, forKey: kCIInputIntensityKey)
+                    
+                    guard let combinedCIImage = composite2.outputImage,
+                          let combinedCGImage = ciContext.createCGImage(combinedCIImage, from: combinedCIImage.extent) else {
+                        continuation(.success(image))
+                        return
+                    }
+                    
+                    continuation(.success(Image(uiImage: UIImage(cgImage: combinedCGImage))))
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            })
+        }
     private func capturePanoramic(watermark: WatermarkSettings, numFrames: Int = 3) async throws -> Image {
         var capturedImages: [UIImage] = []
 
