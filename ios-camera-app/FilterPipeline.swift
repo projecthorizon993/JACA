@@ -32,6 +32,12 @@ class FilterPipeline {
     /// Beauty / skin smoothing intensity (0-1).
     var beautyIntensity: Float = 0.0
 
+    /// Portrait / bokeh intensity (0-1).
+    var portraitIntensity: Float = 0.0
+
+    /// Night mode / low light enhancement intensity (0-1).
+    var nightIntensity: Float = 0.0
+
     /// Create pipeline. Use Metal GPU backend when available and requested.
     init(useMetal: Bool = MetalFilterPipeline.isMetalAvailable) {
         self.useMetal = useMetal && MetalFilterPipeline.isMetalAvailable
@@ -94,6 +100,9 @@ class FilterPipeline {
 
         // 8. Apply portrait mode / bokeh effect
         filtered = applyPortraitMode(to: filtered, intensity: settings.portraitIntensity)
+
+        // 9. Apply night mode / low light enhancement
+        filtered = applyNightMode(to: filtered, intensity: settings.nightIntensity)
 
         // 9. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
@@ -245,6 +254,35 @@ class FilterPipeline {
         blend.setValue(radialMask, forKey: kCIInputMaskImageKey)
 
         return blend.outputImage ?? blurred
+    }
+
+    // MARK: - Night mode / low light enhancement
+
+    /// Night mode enhances low light by boosting brightness/contrast and reducing noise.
+    private func applyNightMode(to image: CIImage, intensity: Float) -> CIImage {
+        guard intensity > 0 else { return image }
+
+        // Increase brightness and contrast for low light
+        guard let controls = CIFilter(name: "CIColorControls") else { return image }
+        controls.setValue(image, forKey: kCIInputImageKey)
+        controls.setValue(1.0 + intensity * 0.3, forKey: kCIInputBrightnessKey)
+        controls.setValue(1.0 + intensity * 0.4, forKey: kCIInputContrastKey)
+        controls.setValue(1.0 + intensity * 0.2, forKey: kCIInputSaturationKey)
+        guard let brightened = controls.outputImage else { return image }
+
+        // Reduce noise with slight blur
+        guard let blur = CIFilter(name: "CIGaussianBlur") else { return brightened }
+        blur.setValue(brightened, forKey: kCIInputImageKey)
+        blur.setValue(intensity * 1.5, forKey: kCIInputRadiusKey)
+        guard let blurred = blur.outputImage else { return brightened }
+
+        // Blend original (sharp) with blurred (noise reduced)
+        guard let blend = CIFilter(name: "CISourceOverCompositing") else { return brightened }
+        blend.setValue(blurred, forKey: kCIInputImageKey)
+        blend.setValue(image, forKey: kCIInputBackgroundImageKey)
+        blend.setValue(intensity * 0.5, forKey: kCIInputIntensityKey)
+
+        return blend.outputImage ?? brightened
     }
 
     // MARK: - Leica Color Profile (ported from Xiaomi/Leica color science)
