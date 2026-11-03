@@ -29,6 +29,9 @@ class FilterPipeline {
     private let metalPipeline: MetalFilterPipeline?
     private let useMetal: Bool
 
+    /// Beauty / skin smoothing intensity (0-1).
+    var beautyIntensity: Float = 0.0
+
     /// Create pipeline. Use Metal GPU backend when available and requested.
     init(useMetal: Bool = MetalFilterPipeline.isMetalAvailable) {
         self.useMetal = useMetal && MetalFilterPipeline.isMetalAvailable
@@ -86,7 +89,10 @@ class FilterPipeline {
         // 6. Apply film grain
         filtered = applyFilmGrain(to: filtered, intensity: settings.intensity * 0.15)
 
-        // 7. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        // 7. Apply beauty / skin smoothing
+        filtered = applyBeauty(to: filtered, intensity: settings.beautyIntensity)
+
+        // 8. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
             filtered = WatermarkManager.applyToPixelBuffer(
                 pixelBuffer,
@@ -182,6 +188,24 @@ class FilterPipeline {
         blend.setValue(grain, forKey: kCIInputMaskImageKey)
         blend.setValue(intensity, forKey: kCIInputIntensityKey)
         return blend.outputImage ?? image
+    }
+
+    // MARK: - Beauty / skin smoothing
+
+    /// Beauty filter smooths skin tones using bilateral-style blur blended at low intensity.
+    private func applyBeauty(to image: CIImage, intensity: Float) -> CIImage {
+        guard intensity > 0 else { return image }
+        guard let blur = CIFilter(name: "CIGaussianBlur") else { return image }
+        blur.setValue(image, forKey: kCIInputImageKey)
+        blur.setValue(intensity * 2.0, forKey: kCIInputRadiusKey)
+        guard let blurred = blur.outputImage else { return image }
+
+        // Blend blurred with original at low strength for subtle skin smoothing
+        guard let blend = CIFilter(name: "CIBlendWithMask") else { return blurred }
+        blend.setValue(blurred, forKey: kCIInputImageKey)
+        blend.setValue(image, forKey: kCIInputBackgroundImageKey)
+        blend.setValue(intensity * 0.5, forKey: kCIInputIntensityKey)
+        return blend.outputImage ?? blurred
     }
 
     // MARK: - Leica Color Profile (ported from Xiaomi/Leica color science)

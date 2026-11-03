@@ -29,6 +29,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var movieFileOutput: AVCaptureMovieFileOutput?
     private var captureDevice: AVCaptureDevice?
     private let locationManager = CLLocationManager()
+    private var currentBeautyIntensity: Float = 0.0
 
     // MARK: - Video recording
 
@@ -487,8 +488,10 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             intensity: currentLUTIntensity,
             type: currentFilterType,
             color: ColorAdjustment(),
-            leicaProfile: currentLeicaProfile
+            leicaProfile: currentLeicaProfile,
+            beautyIntensity: currentBeautyIntensity
         )
+        filterPipeline.beautyIntensity = currentBeautyIntensity
         let filtered = filterPipeline.apply(
             to: pixelBuffer,
             settings: settings,

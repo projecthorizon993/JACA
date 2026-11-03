@@ -31,6 +31,7 @@ class CameraViewController: UIViewController {
     private let watermarkToggle = UISwitch()
     private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
     private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
+    private let beautyIntensitySlider = UISlider()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -118,6 +119,14 @@ class CameraViewController: UIViewController {
         whiteBalanceControl.selectedSegmentIndex = WhiteBalanceMode.allCases.firstIndex(of: screen.model.whiteBalanceMode) ?? 0
         whiteBalanceControl.addTarget(self, action: #selector(whiteBalanceChanged(_:)), for: .valueChanged)
         view.addSubview(whiteBalanceControl)
+
+        // Beauty intensity slider
+        beautyIntensitySlider.translatesAutoresizingMaskIntoConstraints = false
+        beautyIntensitySlider.minimumValue = 0
+        beautyIntensitySlider.maximumValue = 1
+        beautyIntensitySlider.value = 0
+        beautyIntensitySlider.addTarget(self, action: #selector(beautyIntensityChanged(_:)), for: .valueChanged)
+        view.addSubview(beautyIntensitySlider)
 
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
@@ -214,7 +223,11 @@ class CameraViewController: UIViewController {
             watermarkScaleSlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
 
             watermarkToggle.centerYAnchor.constraint(equalTo: watermarkScaleSlider.centerYAnchor),
-            watermarkToggle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            watermarkToggle.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            beautyIntensitySlider.topAnchor.constraint(equalTo: watermarkScaleSlider.bottomAnchor, constant: 6),
+            beautyIntensitySlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            beautyIntensitySlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
 
@@ -312,6 +325,11 @@ class CameraViewController: UIViewController {
 
     @objc private func flipCamera(_ sender: UIButton) {
         cameraEngine.switchCamera()
+    }
+
+    @objc private func beautyIntensityChanged(_ sender: UISlider) {
+        cameraEngine.filterPipeline.beautyIntensity = sender.value
+        screen.model.beautyIntensity = sender.value
     }
 
     @objc private func cameraModeChanged(_ sender: UISegmentedControl) {
