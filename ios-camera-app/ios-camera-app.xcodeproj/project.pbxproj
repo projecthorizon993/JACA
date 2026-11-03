@@ -43,6 +43,19 @@
           <key>sourceTree</key>
           <string>&amp;lt;group&amp;gt;</string>
         </dict>
+        <key>3</key>
+        <dict>
+          <key>isa</key>
+          <string>PBXFileReference</string>
+          <key>explicitFileType</key>
+          <string>wrapper.application</string>
+          <key>includeInIndex</key>
+          <string>0</string>
+          <key>path</key>
+          <string>ios-camera-app.app</string>
+          <key>sourceTree</key>
+          <string>BUILT_PRODUCTS_DIR</string>
+        </dict>
       </dict>
       <key>PBXFrameworksBuildPhase</key>
       <dict>
@@ -67,7 +80,21 @@
           <key>children</key>
           <array>
             <string>2</string>
+            <string>6</string>
           </array>
+          <key>sourceTree</key>
+          <string>&amp;lt;group&amp;gt;</string>
+        </dict>
+        <key>6</key>
+        <dict>
+          <key>isa</key>
+          <string>PBXGroup</string>
+          <key>children</key>
+          <array>
+            <string>3</string>
+          </array>
+          <key>name</key>
+          <string>Products</string>
           <key>sourceTree</key>
           <string>&amp;lt;group&amp;gt;</string>
         </dict>
@@ -94,7 +121,7 @@
           <key>productName</key>
           <string>ios-camera-app</string>
           <key>productReference</key>
-          <string>2</string>
+          <string>3</string>
           <key>productType</key>
           <string>com.apple.product-type.application</string>
         </dict>
@@ -162,7 +189,7 @@
           <integer>2147483647</integer>
           <key>files</key>
           <array>
-            <string>1</string>
+            <string>2</string>
           </array>
           <key>runOnlyForDeploymentPostprocessing</key>
           <false />
