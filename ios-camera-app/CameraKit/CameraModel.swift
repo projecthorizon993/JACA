@@ -59,6 +59,8 @@ final class CameraModel {
     var levelDegrees: Double = 0.0       // Device roll angle in degrees
     var zeissLensMode: ZeissLensMode = .off   // Zeiss lens mode
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure
+    var panoramicImages: [UIImage] = []     // Panoramic images captured
+    var isPanoramaMode: Bool = false   // Panorama mode active
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)

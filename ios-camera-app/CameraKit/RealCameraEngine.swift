@@ -528,6 +528,23 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
     }
 
+    /// Capture bracketed exposure sequence (-1EV, 0EV, +1EV) and return all images.
+    private func captureBracketed(settings: WatermarkSettings) async throws -> Image {
+        let evValues: [Float] = [-1.0, 0.0, 1.0]
+        var bracketedImages: [UIImage] = []
+
+        for ev in evValues {
+            let image = try await captureSingleExposure(ev: ev, watermark: settings)
+            bracketedImages.append(image)
+        }
+
+        // Store bracketed images for access by CameraModel
+        self.bracketedPhotos = bracketedImages
+
+        // Return middle (0EV) as primary result
+        return Image(uiImage: bracketedImages[1])
+    }
+
     /// Capture first exposure for double exposure mode.
     private func captureSingleDoubleExposure(watermark: WatermarkSettings) async throws -> Image {
         return try await captureSingleExposure(ev: 0.0, watermark: watermark)
@@ -574,6 +591,66 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         return blendedImage
     }
+
+    /// Capture panoramic sequence - capture multiple frames and stitch them horizontally.
+    private func capturePanoramic(watermark: WatermarkSettings, numFrames: Int = 3) async throws -> Image {
+        var capturedImages: [UIImage] = []
+
+        for _ in 0..<numFrames {
+            let image = try await captureSingleExposure(ev: 0.0, watermark: watermark)
+            bracketedPhotos.append(image)
+            capturedImages.append(image)
+        }
+
+        // Store panoramic images for access by CameraModel
+        self.bracketedPhotos = capturedImages
+
+        // Stitch images horizontally using CISourceOverCompositing with overlap
+        guard capturedImages.count > 1 else {
+            return capturedImages.first ?? Image(uiImage: UIImage())
+        }
+
+        var result = capturedImages[0]
+        for i in 1..<capturedImages.count {
+            guard let resultCI = CIImage(image: result),
+                  let nextCI = CIImage(image: capturedImages[i]) else { break }
+
+            guard let blend = CIFilter(name: "CISourceOverCompositing") else { break }
+
+            // Stitch side by side - place second image to the right of first
+            let resultExtent = resultCI.extent
+            let nextExtent = nextCIImage.extent
+            let totalWidth = resultExtent.width + nextExtent.width * 0.7 // 70% overlap
+
+            // Create canvas
+            guard let canvasCI = CIImage(color: CIColor.black)
+                    .cropped(to: CGRect(x: 0, y: 0, width: totalWidth, height: max(resultExtent.height, nextExtent.height)))
+            else { break }
+
+            // Draw first image
+            var combined = resultCI
+            guard let composite1 = CIFilter(name: "CISourceOverCompositing") else { break }
+            composite1.setValue(resultCI, forKey: kCIInputImageKey)
+            composite1.setValue(canvasCI, forKey: kCIInputBackgroundImageKey)
+            composite1.setValue(1.0, forKey: kCIInputIntensityKey)
+
+            guard let canvas1 = composite1.outputImage else { break }
+
+            // Draw second image to the right
+            guard let composite2 = CIFilter(name: "CISourceOverCompositing") else { break }
+            composite2.setValue(nextCIImage, forKey: kCIInputImageKey)
+            composite2.setValue(canvas1, forKey: kCIInputBackgroundImageKey)
+            composite2.setValue(1.0, forKey: kCIInputIntensityKey)
+
+            guard let combined2 = composite2.outputImage else { break }
+
+            result = Image(uiImage: UIImage(cgImage: ciContext.createCGImage(combined2, from: combined2.extent)!))
+        }
+
+        return result
+    }
+
+    /// Capture a single exposure at the given EV bias.
     private func applyLeicaColorProfile(to ciImage: CIImage, profile: LeicaColorProfile) -> UIImage {
         var result = ciImage
 
