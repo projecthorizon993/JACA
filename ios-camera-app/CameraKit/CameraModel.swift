@@ -61,6 +61,7 @@ final class CameraModel {
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure
     var panoramicImages: [UIImage] = []     // Panoramic images captured
     var isPanoramaMode: Bool = false   // Panorama mode active
+    var slowMotionEnabled: Bool = false   // Slow motion video recording
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)
@@ -136,6 +137,7 @@ protocol CameraEngine: AnyObject {
     func setFlashMode(_ mode: FlashMode)
     func switchCamera()                                 // toggles front/back camera
     func capture(raw: Bool, hevc: Bool, hdr: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image
+    func startSlowMotionRecording() -> URL?
 }
 
 /// Watermark style options ported from decompiled Android camera apps

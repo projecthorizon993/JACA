@@ -30,6 +30,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var captureDevice: AVCaptureDevice?
     private let locationManager = CLLocationManager()
     private var currentBeautyIntensity: Float = 0.0
+    private var currentSlowMotionEnabled: Bool = false
     private var currentZeissLensMode: ZeissLensMode = .off
     weak var cameraModel: CameraModel?
 
@@ -203,6 +204,29 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     func stopVideoRecording() {
         guard let movieFileOutput = movieFileOutput, movieFileOutput.isRecording else { return }
         movieFileOutput.stopRecording()
+    }
+
+    /// Start slow motion video recording at high frame rate (e.g., 240fps)
+    func startSlowMotionRecording() -> URL? {
+        guard let movieFileOutput = movieFileOutput, !movieFileOutput.isRecording else { return nil }
+        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let url = documents.appendingPathComponent("slowmo_\(Date().timeIntervalSince1970).mp4")
+        videoRecordingURL = url
+
+        // Configure for slow motion - high frame rate capture
+        if let connection = movieFileOutput.connection(with: .video) {
+            if connection.isVideoFrameRateSupported(240.0) {
+                connection.videoMinFrameDuration = CMTime(value: 1, timescale: 240)
+                connection.videoMaxFrameDuration = CMTime(value: 1, timescale: 240)
+            } else if connection.isVideoFrameRateSupported(120.0) {
+                connection.videoMinFrameDuration = CMTime(value: 1, timescale: 120)
+                connection.videoMaxFrameDuration = CMTime(value: 1, timescale: 120)
+            }
+        }
+
+        movieFileOutput.startRecording(to: url, recordingDelegate: self)
+        isRecording = true
+        return url
     }
 
     /// Start the capture session with completion handler.
