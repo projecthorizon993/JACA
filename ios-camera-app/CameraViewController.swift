@@ -31,6 +31,7 @@ class CameraViewController: UIViewController {
     private let watermarkToggle = UISwitch()
     private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
     private let zeissLensControl = UISegmentedControl(items: ZeissLensMode.allCases.map { $0.rawValue })
+    private let distortionModeControl = UISegmentedControl(items: FilterPipeline.DistortionMode.allCases.map { $0.rawValue })
     private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
     private let beautyIntensitySlider = UISlider()
     private let portraitIntensitySlider = UISlider()

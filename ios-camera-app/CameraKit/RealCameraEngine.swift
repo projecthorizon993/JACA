@@ -32,6 +32,8 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var currentBeautyIntensity: Float = 0.0
     private var currentSlowMotionEnabled: Bool = false
     private var currentZeissLensMode: ZeissLensMode = .off
+    private var currentDistortionIntensity: Float = 0.0
+    private var currentDistortionMode: FilterPipeline.DistortionMode = .off
     weak var cameraModel: CameraModel?
 
     // MARK: - Video recording
@@ -557,13 +559,25 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         guard let model = cameraModel, model.mlActionDetectionEnabled else { return }
 
         // Simulate ML action detection - in production would use Core ML model
-        let actions = ["walking", "running", "jumping", "sitting", "standing", "running", "cycling"]
+        let actions = ["walking", "running", "jumping", "sitting", "standing", "cycling"]
         let randomAction = actions.randomElement() ?? "unknown"
-        let confidence = Double.random(in: 0.7...0.99)
 
         DispatchQueue.main.async { [weak self] in
-            self?.cameraModel?.mlActionDetectionEnabled = true
             self?.cameraModel?.detectedAction = randomAction
+        }
+    }
+
+    /// Perform AI object detection on current frame.
+    private func detectAIObjects(from pixelBuffer: CVPixelBuffer) {
+        guard let model = cameraModel, model.aiObjectDetectionEnabled else { return }
+
+        // Simulate AI object detection - in production would use Core ML model (Vision)
+        let possibleObjects = ["person", "car", "dog", "cat", "bicycle", "cup", "cell phone", "book"]
+        let detected = possibleObjects.filter { _ in Bool.random() }
+        let objects = detected.isEmpty ? ["scene"] : detected
+
+        DispatchQueue.main.async { [weak self] in
+            self?.cameraModel?.detectedObjects = objects
         }
     }
 
@@ -888,6 +902,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         // AI action detection
         detectMLAction(from: pixelBuffer)
+
+        // AI object detection
+        detectAIObjects(from: pixelBuffer)
         let settings = FilterSettings(
             lut: currentLUT,
             intensity: currentLUTIntensity,
@@ -895,9 +912,13 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             color: ColorAdjustment(),
             leicaProfile: currentLeicaProfile,
             beautyIntensity: currentBeautyIntensity,
-            zeissLensMode: currentZeissLensMode
+            zeissLensMode: currentZeissLensMode,
+            distortionIntensity: currentDistortionIntensity,
+            distortionMode: currentDistortionMode
         )
         filterPipeline.beautyIntensity = currentBeautyIntensity
+        filterPipeline.distortionIntensity = currentDistortionIntensity
+        filterPipeline.distortionMode = currentDistortionMode
         let filtered = filterPipeline.apply(
             to: pixelBuffer,
             settings: settings,

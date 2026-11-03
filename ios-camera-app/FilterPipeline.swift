@@ -110,7 +110,10 @@ class FilterPipeline {
         // 10. Apply Zeiss lens mode
         filtered = applyZeissLensMode(to: filtered, mode: settings.zeissLensMode)
 
-        // 11. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        // 11. Apply distortion correction
+        filtered = applyDistortionCorrection(to: filtered, mode: settings.distortionMode, intensity: settings.distortionIntensity)
+
+        // 12. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
             filtered = WatermarkManager.applyToPixelBuffer(
                 pixelBuffer,
@@ -401,5 +404,46 @@ class FilterPipeline {
             return UIImage()
         }
         return UIImage(cgImage: cgImage)
+    }
+
+    // MARK: - Distortion Correction
+
+    /// Distortion correction modes for lens distortion effects (fisheye, barrel, pinch).
+    enum DistortionMode: String, CaseIterable {
+        case off = "Off"
+        case pinch = "Pinch"
+        case torus = "Torus"
+    }
+
+    /// Distortion correction intensity (0-1).
+    var distortionIntensity: Float = 0.0
+    var distortionMode: DistortionMode = .off
+
+    /// Apply distortion correction using CIPinchDistortion or CITorusLensDistortion.
+    private func applyDistortionCorrection(to image: CIImage, mode: DistortionMode, intensity: Float) -> CIImage {
+        guard intensity > 0, mode != .off else { return image }
+
+        switch mode {
+        case .pinch:
+            // CIPinchDistortion: pinches image toward or away from center
+            guard let pinch = CIFilter(name: "CIPinchDistortion") else { return image }
+            pinch.setValue(image, forKey: kCIInputImageKey)
+            pinch.setValue(CIVector(x: image.extent.midX, y: image.extent.midY), forKey: "inputCenter")
+            pinch.setValue(intensity * 200, forKey: "inputRadius")
+            pinch.setValue(intensity * 0.5, forKey: "inputScale")
+            return pinch.outputImage ?? image
+
+        case .torus:
+            // CITorusLensDistortion: torus/lens distortion effect
+            guard let torus = CIFilter(name: "CITorusLensDistortion") else { return image }
+            torus.setValue(image, forKey: kCIInputImageKey)
+            torus.setValue(CIVector(x: image.extent.midX, y: image.extent.midY), forKey: "inputCenter")
+            torus.setValue(intensity * 0.5, forKey: "inputRadius")
+            torus.setValue(intensity * 0.5, forKey: "inputWidth")
+            return torus.outputImage ?? image
+
+        default:
+            return image
+        }
     }
 }

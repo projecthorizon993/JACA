@@ -65,6 +65,8 @@ final class CameraModel {
     var timeLapseEnabled: Bool = false   // Time lapse video recording
     var mlActionDetectionEnabled: Bool = false   // ML action detection
     var detectedAction: String = ""   // Detected ML action
+    var aiObjectDetectionEnabled: Bool = false   // AI object detection
+    var detectedObjects: [String] = []   // Detected object labels
     var dualCameraEnabled: Bool = false   // Dual camera / dual vision mode
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
@@ -199,6 +201,8 @@ struct FilterSettings {
     var portraitIntensity: Float = 0.0  // portrait/bokeh 0-1
     var nightIntensity: Float = 0.0     // night mode/Low light enhancement 0-1
     var zeissLensMode: ZeissLensMode = .off   // Zeiss lens mode
+    var distortionIntensity: Float = 0.0   // distortion correction 0-1
+    var distortionMode: FilterPipeline.DistortionMode = .off   // distortion mode
     var type: Int = 0  // filter segment index
     var color: ColorAdjustment = ColorAdjustment()
     var leicaProfile: LeicaColorProfile = .off
