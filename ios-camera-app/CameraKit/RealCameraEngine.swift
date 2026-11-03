@@ -30,6 +30,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var captureDevice: AVCaptureDevice?
     private let locationManager = CLLocationManager()
     private var currentBeautyIntensity: Float = 0.0
+    private var currentZeissLensMode: ZeissLensMode = .off
     weak var cameraModel: CameraModel?
 
     // MARK: - Video recording
@@ -682,7 +683,8 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             type: currentFilterType,
             color: ColorAdjustment(),
             leicaProfile: currentLeicaProfile,
-            beautyIntensity: currentBeautyIntensity
+            beautyIntensity: currentBeautyIntensity,
+            zeissLensMode: currentZeissLensMode
         )
         filterPipeline.beautyIntensity = currentBeautyIntensity
         let filtered = filterPipeline.apply(

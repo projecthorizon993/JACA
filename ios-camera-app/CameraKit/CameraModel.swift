@@ -57,6 +57,8 @@ final class CameraModel {
     var nightModeEnabled: Bool = false   // Night mode - enhanced low light
     var aiSceneDetectionEnabled: Bool = false   // AI scene detection filter
     var levelDegrees: Double = 0.0       // Device roll angle in degrees
+    var zeissLensMode: ZeissLensMode = .off   // Zeiss lens mode
+    var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)
@@ -154,6 +156,14 @@ enum LeicaColorProfile: String, CaseIterable {
     case leicaBw = "Leica B&W"
 }
 
+/// Zeiss lens modes (Zeiss lens science ported from Vivo Zeiss partnership)
+enum ZeissLensMode: String, CaseIterable {
+    case off = "Off"
+    case zeissDistagon = "Zeiss Distagon"
+    case zeissPlanar = "Zeiss Planar"
+    case zeissSonnar = "Zeiss Sonnar"
+}
+
 /// Watermark position options
 enum WatermarkPosition: String, CaseIterable {
     case bottomRight = "Bottom Right"
@@ -179,6 +189,8 @@ struct FilterSettings {
     var intensity: Float = 1.0
     var beautyIntensity: Float = 0.0    // beauty/skin smoothing 0-1
     var portraitIntensity: Float = 0.0  // portrait/bokeh 0-1
+    var nightIntensity: Float = 0.0     // night mode/Low light enhancement 0-1
+    var zeissLensMode: ZeissLensMode = .off   // Zeiss lens mode
     var type: Int = 0  // filter segment index
     var color: ColorAdjustment = ColorAdjustment()
     var leicaProfile: LeicaColorProfile = .off

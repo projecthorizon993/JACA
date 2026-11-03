@@ -30,6 +30,7 @@ class CameraViewController: UIViewController {
     private let watermarkScaleSlider = UISlider()
     private let watermarkToggle = UISwitch()
     private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
+    private let zeissLensControl = UISegmentedControl(items: ZeissLensMode.allCases.map { $0.rawValue })
     private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
     private let beautyIntensitySlider = UISlider()
     private let portraitIntensitySlider = UISlider()
@@ -116,6 +117,12 @@ class CameraViewController: UIViewController {
         leicaColorControl.selectedSegmentIndex = 0
         leicaColorControl.addTarget(self, action: #selector(leicaColorChanged(_:)), for: .valueChanged)
         view.addSubview(leicaColorControl)
+
+        // Zeiss lens mode selector
+        zeissLensControl.translatesAutoresizingMaskIntoConstraints = false
+        zeissLensControl.selectedSegmentIndex = ZeissLensMode.allCases.firstIndex(of: screen.model.zeissLensMode) ?? 0
+        zeissLensControl.addTarget(self, action: #selector(zeissLensChanged(_:)), for: .valueChanged)
+        view.addSubview(zeissLensControl)
 
         // White balance selector
         whiteBalanceControl.translatesAutoresizingMaskIntoConstraints = false
@@ -218,7 +225,12 @@ class CameraViewController: UIViewController {
             leicaColorControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             leicaColorControl.heightAnchor.constraint(equalToConstant: 32),
 
-            whiteBalanceControl.topAnchor.constraint(equalTo: leicaColorControl.bottomAnchor, constant: 6),
+            zeissLensControl.topAnchor.constraint(equalTo: leicaColorControl.bottomAnchor, constant: 6),
+            zeissLensControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            zeissLensControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            zeissLensControl.heightAnchor.constraint(equalToConstant: 32),
+
+            whiteBalanceControl.topAnchor.constraint(equalTo: zeissLensControl.bottomAnchor, constant: 6),
             whiteBalanceControl.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             whiteBalanceControl.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             whiteBalanceControl.heightAnchor.constraint(equalToConstant: 32),
@@ -364,6 +376,12 @@ class CameraViewController: UIViewController {
         let profiles = LeicaColorProfile.allCases
         screen.model.leicaColorProfile = profiles[sender.selectedSegmentIndex]
         cameraEngine.currentLeicaProfile = profiles[sender.selectedSegmentIndex]
+    }
+
+    @objc private func zeissLensChanged(_ sender: UISegmentedControl) {
+        let modes = ZeissLensMode.allCases
+        screen.model.zeissLensMode = modes[sender.selectedSegmentIndex]
+        cameraEngine.currentZeissLensMode = modes[sender.selectedSegmentIndex]
     }
 
     @objc private func whiteBalanceChanged(_ sender: UISegmentedControl) {

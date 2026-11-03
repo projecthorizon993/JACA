@@ -38,6 +38,9 @@ class FilterPipeline {
     /// Night mode / low light enhancement intensity (0-1).
     var nightIntensity: Float = 0.0
 
+    /// Zeiss lens mode
+    var zeissLensMode: ZeissLensMode = .off
+
     /// Create pipeline. Use Metal GPU backend when available and requested.
     init(useMetal: Bool = MetalFilterPipeline.isMetalAvailable) {
         self.useMetal = useMetal && MetalFilterPipeline.isMetalAvailable
@@ -104,7 +107,10 @@ class FilterPipeline {
         // 9. Apply night mode / low light enhancement
         filtered = applyNightMode(to: filtered, intensity: settings.nightIntensity)
 
-        // 9. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        // 10. Apply Zeiss lens mode
+        filtered = applyZeissLensMode(to: filtered, mode: settings.zeissLensMode)
+
+        // 11. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
             filtered = WatermarkManager.applyToPixelBuffer(
                 pixelBuffer,
@@ -285,13 +291,45 @@ class FilterPipeline {
         return blend.outputImage ?? brightened
     }
 
-    // MARK: - Leica Color Profile (ported from Xiaomi/Leica color science)
+    // MARK: - Zeiss Lens Mode
 
-    /// Leica color profiles:
-    /// - Leica Classic: Warm, slightly desaturated, rich blacks, natural skin tones
-    /// - Leica Vivid: Saturated colors, punchy contrast, cooler highlights
-    /// - Leica B&W: Monochrome with Leica tonal curve
-    private func applyLeicaColorProfile(to image: CIImage, profile: LeicaColorProfile) -> CIImage {
+    /// Zeiss lens modes apply characteristic lens rendering (contrast, bokeh, color rendering).
+    private func applyZeissLensMode(to image: CIImage, mode: ZeissLensMode) -> CIImage {
+        guard mode != .off else { return image }
+
+        switch mode {
+        case .zeissDistagon:
+            // Distagon: Wide angle, high contrast, cooler tones
+            return applyZeissMatrix(to: image, r: 1.05, g: 0.98, b: 0.92, contrast: 1.15, saturation: 1.05)
+        case .zeissPlanar:
+            // Planar: Standard, balanced contrast, natural colors
+            return applyZeissMatrix(to: image, r: 1.02, g: 1.00, b: 0.98, contrast: 1.05, saturation: 1.0)
+        case .zeissSonnar:
+            // Sonnar: Telephoto, soft bokeh, warmer tones
+            return applyZeissMatrix(to: image, r: 1.08, g: 1.02, b: 0.95, contrast: 1.05, saturation: 1.10)
+        default:
+            return image
+        }
+    }
+
+    private func applyZeissMatrix(to image: CIImage, r: Float, g: Float, b: Float, contrast: Float, saturation: Float) -> CIImage {
+        guard let matrix = CIFilter(name: "CIColorMatrix") else { return image }
+        matrix.setValue(image, forKey: kCIInputImageKey)
+        matrix.setValue(CIVector(x: r, y: 0, z: 0, w: 0), forKey: "inputRVector")
+        matrix.setValue(CIVector(x: 0, y: g, z: 0, w: 0), forKey: "inputGVector")
+        matrix.setValue(CIVector(x: 0, y: 0, z: b, w: 0), forKey: "inputBVector")
+        matrix.setValue(CIVector(x: 0, y: 0, z: 0, w: 1), forKey: "inputAVector")
+        matrix.setValue(CIVector(x: 0, y: 0, z: 0, w: 0), forKey: "inputBiasVector")
+
+        guard let result = matrix.outputImage else { return image }
+
+        guard let controls = CIFilter(name: "CIColorControls") else { return result }
+        controls.setValue(result, forKey: kCIInputImageKey)
+        controls.setValue(contrast, forKey: kCIInputContrastKey)
+        controls.setValue(saturation, forKey: kCIInputSaturationKey)
+
+        return controls.outputImage ?? result
+    }
         switch profile {
         case .off:
             return image
