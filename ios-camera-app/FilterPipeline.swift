@@ -92,7 +92,10 @@ class FilterPipeline {
         // 7. Apply beauty / skin smoothing
         filtered = applyBeauty(to: filtered, intensity: settings.beautyIntensity)
 
-        // 8. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
+        // 8. Apply portrait mode / bokeh effect
+        filtered = applyPortraitMode(to: filtered, intensity: settings.portraitIntensity)
+
+        // 9. Apply watermark (ported from Xiaomi/OnePlus/Vivo watermark systems)
         if watermark.isEnabled {
             filtered = WatermarkManager.applyToPixelBuffer(
                 pixelBuffer,
@@ -205,6 +208,42 @@ class FilterPipeline {
         blend.setValue(blurred, forKey: kCIInputImageKey)
         blend.setValue(image, forKey: kCIInputBackgroundImageKey)
         blend.setValue(intensity * 0.5, forKey: kCIInputIntensityKey)
+        return blend.outputImage ?? blurred
+    }
+
+    // MARK: - Portrait mode / Bokeh effect
+
+    /// Portrait mode applies a depth-based blur (bokeh) effect using radial gradient mask.
+    private func applyPortraitMode(to image: CIImage, intensity: Float) -> CIImage {
+        guard intensity > 0 else { return image }
+        let extent = image.extent
+        let center = CGPoint(x: extent.midX, y: extent.midY)
+        let radius = min(extent.width, extent.height) * 0.4
+
+        // Create radial gradient mask (sharp center, blurred edges)
+        let radial = CIFilter(name: "CIRadialGradient")!
+        radial.setValue(CIVector(x: center.x, y: center.y), forKey: "inputCenter")
+        radial.setValue(CIVector(x: 0, y: 0), forKey: "inputRadius0")
+        radial.setValue(CIVector(x: radius, y: radius), forKey: "inputRadius1")
+        radial.setValue(CIColor(color: .white), forKey: "inputColor0")
+        radial.setValue(CIColor(color: .black), forKey: "inputColor1")
+
+        guard let radialMask = radial.outputImage?.cropped(to: image.extent) else {
+            return image
+        }
+
+        // Blur the image
+        guard let blur = CIFilter(name: "CIGaussianBlur") else { return image }
+        blur.setValue(image, forKey: kCIInputImageKey)
+        blur.setValue(intensity * 3.0, forKey: kCIInputRadiusKey)
+        guard let blurred = blur.outputImage else { return image }
+
+        // Blend blurred background with sharp center using radial mask
+        guard let blend = CIFilter(name: "CIBlendWithMask") else { return blurred }
+        blend.setValue(blurred, forKey: kCIInputImageKey)
+        blend.setValue(image, forKey: kCIInputBackgroundImageKey)
+        blend.setValue(radialMask, forKey: kCIInputMaskImageKey)
+
         return blend.outputImage ?? blurred
     }
 

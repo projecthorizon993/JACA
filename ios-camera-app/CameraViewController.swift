@@ -32,6 +32,7 @@ class CameraViewController: UIViewController {
     private let leicaColorControl = UISegmentedControl(items: ["Off", "Classic", "Vivid", "B&W"])
     private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
     private let beautyIntensitySlider = UISlider()
+    private let portraitIntensitySlider = UISlider()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -127,6 +128,14 @@ class CameraViewController: UIViewController {
         beautyIntensitySlider.value = 0
         beautyIntensitySlider.addTarget(self, action: #selector(beautyIntensityChanged(_:)), for: .valueChanged)
         view.addSubview(beautyIntensitySlider)
+
+        // Portrait intensity slider
+        portraitIntensitySlider.translatesAutoresizingMaskIntoConstraints = false
+        portraitIntensitySlider.minimumValue = 0
+        portraitIntensitySlider.maximumValue = 1
+        portraitIntensitySlider.value = 0
+        portraitIntensitySlider.addTarget(self, action: #selector(portraitIntensityChanged(_:)), for: .valueChanged)
+        view.addSubview(portraitIntensitySlider)
 
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
@@ -228,6 +237,10 @@ class CameraViewController: UIViewController {
             beautyIntensitySlider.topAnchor.constraint(equalTo: watermarkScaleSlider.bottomAnchor, constant: 6),
             beautyIntensitySlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             beautyIntensitySlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            portraitIntensitySlider.topAnchor.constraint(equalTo: beautyIntensitySlider.bottomAnchor, constant: 6),
+            portraitIntensitySlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            portraitIntensitySlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
 
@@ -340,6 +353,11 @@ class CameraViewController: UIViewController {
     @objc private func beautyIntensityChanged(_ sender: UISlider) {
         cameraEngine.filterPipeline.beautyIntensity = sender.value
         screen.model.beautyIntensity = sender.value
+    }
+
+    @objc private func portraitIntensityChanged(_ sender: UISlider) {
+        cameraEngine.filterPipeline.portraitIntensity = sender.value
+        screen.model.portraitIntensity = sender.value
     }
 
     @objc private func cameraModeChanged(_ sender: UISegmentedControl) {

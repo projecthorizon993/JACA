@@ -174,6 +174,7 @@ struct FilterSettings {
     var lut: CGImage?
     var intensity: Float = 1.0
     var beautyIntensity: Float = 0.0    // beauty/skin smoothing 0-1
+    var portraitIntensity: Float = 0.0  // portrait/bokeh 0-1
     var type: Int = 0  // filter segment index
     var color: ColorAdjustment = ColorAdjustment()
     var leicaProfile: LeicaColorProfile = .off
