@@ -33,6 +33,7 @@ class CameraViewController: UIViewController {
     private let whiteBalanceControl = UISegmentedControl(items: WhiteBalanceMode.allCases.map { $0.rawValue })
     private let beautyIntensitySlider = UISlider()
     private let portraitIntensitySlider = UISlider()
+    private let nightModeSlider = UISlider()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -136,6 +137,14 @@ class CameraViewController: UIViewController {
         portraitIntensitySlider.value = 0
         portraitIntensitySlider.addTarget(self, action: #selector(portraitIntensityChanged(_:)), for: .valueChanged)
         view.addSubview(portraitIntensitySlider)
+
+        // Night mode intensity slider
+        nightModeSlider.translatesAutoresizingMaskIntoConstraints = false
+        nightModeSlider.minimumValue = 0
+        nightModeSlider.maximumValue = 1
+        nightModeSlider.value = 0
+        nightModeSlider.addTarget(self, action: #selector(nightIntensityChanged(_:)), for: .valueChanged)
+        view.addSubview(nightModeSlider)
 
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
@@ -241,6 +250,10 @@ class CameraViewController: UIViewController {
             portraitIntensitySlider.topAnchor.constraint(equalTo: beautyIntensitySlider.bottomAnchor, constant: 6),
             portraitIntensitySlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             portraitIntensitySlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            nightModeSlider.topAnchor.constraint(equalTo: portraitIntensitySlider.bottomAnchor, constant: 6),
+            nightModeSlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            nightModeSlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
 
@@ -358,6 +371,11 @@ class CameraViewController: UIViewController {
     @objc private func portraitIntensityChanged(_ sender: UISlider) {
         cameraEngine.filterPipeline.portraitIntensity = sender.value
         screen.model.portraitIntensity = sender.value
+    }
+
+    @objc private func nightIntensityChanged(_ sender: UISlider) {
+        cameraEngine.filterPipeline.nightIntensity = sender.value
+        screen.model.nightIntensity = sender.value
     }
 
     @objc private func cameraModeChanged(_ sender: UISegmentedControl) {

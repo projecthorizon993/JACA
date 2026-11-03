@@ -54,6 +54,7 @@ final class CameraModel {
     var captureCount = 0
     var lastPhoto: Image? = nil
     var faceBounds: [CGRect] = []
+    var nightModeEnabled: Bool = false   // Night mode - enhanced low light performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)
     var histogram: [Double] = Array(repeating: 0.0, count: 48)
