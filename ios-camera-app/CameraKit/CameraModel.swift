@@ -60,6 +60,7 @@ final class CameraModel {
         case jpg   = "JPG"
         case hevc  = "HEVC"
         case dng   = "DNG (RAW)"
+        case hdr   = "HDR"
     }
 
     var captureFormat: CaptureFormat = .jpg
@@ -87,9 +88,11 @@ final class CameraModel {
             do {
                 let isRaw = captureFormat == .dng
                 let isHEVC = captureFormat == .hevc
+                let isHDR = captureFormat == .hdr
                 let image = try await cameraEngine?.capture(
                     raw: isRaw,
                     hevc: isHEVC,
+                    hdr: isHDR,
                     bracket: bracket != nil,
                     watermark: WatermarkSettings(
                         style: watermarkStyle,
@@ -121,7 +124,7 @@ protocol CameraEngine: AnyObject {
     func applyWhiteBalance(_ mode: WhiteBalanceMode)
     func setFlashMode(_ mode: FlashMode)
     func switchCamera()                                 // toggles front/back camera
-    func capture(raw: Bool, hevc: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image
+    func capture(raw: Bool, hevc: Bool, hdr: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image
 }
 
 /// Watermark style options ported from decompiled Android camera apps

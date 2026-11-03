@@ -305,7 +305,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
     }
 
-    func capture(raw: Bool, hevc: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image {
+    func capture(raw: Bool, hevc: Bool, hdr: Bool, bracket: Bool, watermark: WatermarkSettings) async throws -> Image {
         guard let photoOutput = photoOutput else {
             throw CameraEngineError.noPhotoOutput
         }
@@ -329,6 +329,14 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
                 settings.isHighResolutionCaptureEnabled = true
                 if #available(iOS 11.0, *) {
                     settings.isHEVCPhotoQualityPrioritizationEnabled = true
+                }
+                settings.jpegQuality = 1.0
+            } else if hdr {
+                // HDR capture — auto HDR enabled
+                settings = AVCapturePhotoSettings()
+                settings.isHighResolutionCaptureEnabled = true
+                if #available(iOS 13.0, *) {
+                    settings.isAutoHighDynamicRangePhotoEnabled = true
                 }
                 settings.jpegQuality = 1.0
             } else {
