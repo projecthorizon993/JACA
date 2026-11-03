@@ -45,6 +45,8 @@ final class CameraModel {
     var cameraMode: CameraMode = .photo
     var bracket: String? = nil            // "-1.0 | 0 | +1.0"
     var bracketedPhotos: [Image] = []     // bracketed exposure captures
+    var doubleExposureFirst: UIImage? = nil   // first exposure for double exposure mode
+    var isDoubleExposureMode: Bool = false   // double exposure mode active
     var showGrid = true
     var showHistogram = false
     var showPeaking = false

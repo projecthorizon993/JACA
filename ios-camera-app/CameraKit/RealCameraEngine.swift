@@ -30,6 +30,7 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private var captureDevice: AVCaptureDevice?
     private let locationManager = CLLocationManager()
     private var currentBeautyIntensity: Float = 0.0
+    weak var cameraModel: CameraModel?
 
     // MARK: - Video recording
 
@@ -51,6 +52,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
     /// Bracketed exposure capture results (-1EV, 0EV, +1EV)
     private(set) var bracketedPhotos: [UIImage] = []
+
+    /// Double exposure: first exposure stored for blending
+    private var doubleExposureFirst: UIImage? = nil
 
     // MARK: - LUT filter pipeline (from decompiled Android APKs)
 
@@ -313,6 +317,17 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             throw CameraEngineError.noPhotoOutput
         }
 
+        // Double exposure mode: capture two photos and blend them
+        if let model = cameraModel, model.isDoubleExposureMode {
+            if doubleExposureFirst == nil {
+                // First exposure — capture and store
+                return try await captureSingleDoubleExposure(watermark: watermark)
+            } else {
+                // Second exposure — capture and blend with first
+                return try await captureSecondDoubleExposure(watermark: watermark)
+            }
+        }
+
         if bracket {
             return try await captureBracketed(settings: WatermarkSettings(
                 style: watermark.style,
@@ -461,7 +476,52 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
     }
 
-    /// Apply Leica color profile to a CIImage (used for captured photos).
+    /// Capture first exposure for double exposure mode.
+    private func captureSingleDoubleExposure(watermark: WatermarkSettings) async throws -> Image {
+        return try await captureSingleExposure(ev: 0.0, watermark: watermark)
+    }
+
+    /// Capture second exposure and blend with first for double exposure mode.
+    private func captureSecondDoubleExposure(watermark: WatermarkSettings) async throws -> Image {
+        let secondImage = try await captureSingleExposure(ev: 0.0, watermark: watermark)
+
+        // Blend first and second exposure using CIBlendWithMask at 50% opacity
+        guard let firstImage = doubleExposureFirst,
+              let firstCIImage = CIImage(image: firstImage),
+              let secondCIImage = CIImage(image: secondImage) else {
+            return Image(uiImage: secondImage)
+        }
+
+        guard let blend = CIFilter(name: "CISourceOverCompositing") else {
+            return Image(uiImage: secondImage)
+        }
+        blend.setValue(secondCIImage, forKey: kCIInputImageKey)
+        blend.setValue(firstCIImage, forKey: kCIInputBackgroundImageKey)
+        blend.setValue(0.5, forKey: kCIInputIntensityKey)
+
+        guard let blendedCIImage = blend.outputImage,
+              let blendedCGImage = ciContext.createCGImage(blendedCIImage, from: blendedCIImage.extent) else {
+            return Image(uiImage: secondImage)
+        }
+
+        let blendedImage = Image(uiImage: UIImage(cgImage: blendedCGImage))
+
+        // Reset double exposure state
+        doubleExposureFirst = nil
+
+        // Save blended photo to photo library
+        let finalImage = Image(uiImage: UIImage(cgImage: blendedCGImage))
+        saveToPhotoLibrary(image: finalImage) { saveResult in
+            switch saveResult {
+            case .success:
+                break
+            case .failure(let error):
+                print("Failed to save double exposure to photo library: \(error)")
+            }
+        }
+
+        return blendedImage
+    }
     private func applyLeicaColorProfile(to ciImage: CIImage, profile: LeicaColorProfile) -> UIImage {
         var result = ciImage
 

@@ -234,6 +234,7 @@ class CameraViewController: UIViewController {
     private func setupSwiftUICamera() {
         self.screen = CameraScreen { PlaceholderScene() }
         self.screen.model.cameraEngine = cameraEngine
+        cameraEngine.cameraModel = screen.model
 
         // Wire filtered frame callback — displays LUT + watermark applied preview
         cameraEngine.onFilteredFrame = { [weak self] image in
