@@ -49,6 +49,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     private let faceRequest = VNDetectFaceRectanglesRequest()
     private let visionQueue = DispatchQueue(label: "camera.vision.queue", qos: .userInteractive)
 
+    /// Bracketed exposure capture results (-1EV, 0EV, +1EV)
+    private(set) var bracketedPhotos: [UIImage] = []
+
     // MARK: - LUT filter pipeline (from decompiled Android APKs)
 
     private let filterPipeline = FilterPipeline()
@@ -310,6 +313,17 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
             throw CameraEngineError.noPhotoOutput
         }
 
+        if bracket {
+            return try await captureBracketed(settings: WatermarkSettings(
+                style: watermark.style,
+                position: watermark.position,
+                opacity: watermark.opacity,
+                scale: watermark.scale,
+                isEnabled: watermark.isEnabled,
+                leicaProfile: watermark.leicaProfile
+            ))
+        }
+
         return try await withCheckedThrowingContinuation { continuation in
             let settings: AVCapturePhotoSettings
 
@@ -384,6 +398,62 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
                             continuation(.success(finalImage)) // Still return image even if save fails
                         }
                     }
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            })
+        }
+    }
+
+    /// Capture bracketed exposure sequence (-1EV, 0EV, +1EV) and return all images.
+    private func captureBracketed(settings: WatermarkSettings) async throws -> Image {
+        let evValues: [Float] = [-1.0, 0.0, 1.0]
+        var bracketedImages: [UIImage] = []
+
+        for ev in evValues {
+            let image = try await captureSingleExposure(ev: ev, watermark: settings)
+            bracketedImages.append(image)
+        }
+
+        // Store bracketed images for access by CameraModel
+        self.bracketedPhotos = bracketedImages
+
+        // Return middle (0EV) as primary result
+        return Image(uiImage: bracketedImages[1])
+    }
+
+    /// Capture a single exposure at the given EV bias.
+    private func captureSingleExposure(ev: Float, watermark: WatermarkSettings) async throws -> UIImage {
+        return try await withCheckedThrowingContinuation { continuation in
+            let settings = AVCapturePhotoSettings()
+            settings.isHighResolutionCaptureEnabled = true
+            settings.exposureTargetBias = ev
+            settings.jpegQuality = 1.0
+
+            photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate { [weak self] result in
+                switch result {
+                case .success(let image):
+                    let uiImage = UIImage(image: image)
+                    var processedImage = uiImage
+
+                    if let ciImage = CIImage(image: uiImage) {
+                        let leicaProfile = watermark.leicaProfile ?? .off
+                        if leicaProfile != .off {
+                            processedImage = self?.applyLeicaColorProfile(to: ciImage, profile: leicaProfile) ?? uiImage
+                        }
+                    }
+
+                    if watermark.isEnabled {
+                        processedImage = WatermarkManager.applyWatermark(
+                            to: processedImage,
+                            style: watermark.style,
+                            position: watermark.position,
+                            opacity: watermark.opacity,
+                            scale: watermark.scale
+                        )
+                    }
+
+                    continuation(.success(processedImage))
                 case .failure(let error):
                     continuation.resume(throwing: error)
                 }

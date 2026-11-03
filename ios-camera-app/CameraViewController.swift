@@ -255,6 +255,15 @@ class CameraViewController: UIViewController {
             self.screen.model.faceBounds = self.cameraEngine.faceBounds
         }
 
+        // Wire bracketed photos from camera engine to model
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if !self.cameraEngine.bracketedPhotos.isEmpty {
+                self.screen.model.bracketedPhotos = self.cameraEngine.bracketedPhotos.map { Image(uiImage: $0) }
+                self.cameraEngine.bracketedPhotos = [] // clear after reading
+            }
+        }
+
         // Wire capture format selector to CameraModel
         formatSegmentedControl.addTarget(self, action: #selector(formatChanged(_:)), for: .valueChanged)
 

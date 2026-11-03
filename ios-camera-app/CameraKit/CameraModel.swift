@@ -44,6 +44,7 @@ final class CameraModel {
     var cameraPosition: CameraPosition = .back
     var cameraMode: CameraMode = .photo
     var bracket: String? = nil            // "-1.0 | 0 | +1.0"
+    var bracketedPhotos: [Image] = []     // bracketed exposure captures
     var showGrid = true
     var showHistogram = false
     var showPeaking = false
