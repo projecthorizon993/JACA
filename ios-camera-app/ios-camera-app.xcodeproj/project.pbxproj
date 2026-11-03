@@ -9,15 +9,20 @@
         "isa" : "PBXBuildFile",
         "fileRef" : "2",
         "settings" : {}
+      },
+      "2" : {
+        "isa" : "PBXBuildFile",
+        "fileRef" : "3",
+        "settings" : {}
       }
     },
 
     "PBXContainerItemProxy" : {
       "1" : {
         "isa" : "PBXContainerItemProxy",
-        "containerPortal" : "1",
+        "containerPortal" : "4",
         "proxyType" : "1",
-        "remoteGlobalIDString" : "1",
+        "remoteGlobalIDString" : "5",
         "remoteInfo" : "ios-camera-app"
       }
     },
@@ -33,6 +38,13 @@
         "explicitFileType" : "sourcecode.swift",
         "path" : "AppDelegate.swift",
         "sourceTree" : "<group>"
+      },
+      "3" : {
+        "isa" : "PBXFileReference",
+        "explicitFileType" : "wrapper.application",
+        "includeInIndex" : "0",
+        "path" : "ios-camera-app.app",
+        "sourceTree" : "BUILT_PRODUCTS_DIR"
       }
     },
 
@@ -49,36 +61,45 @@
       "1" : {
         "isa" : "PBXGroup",
         "children" : [
-          "2"
+          "2",
+          "6"
         ],
+        "sourceTree" : "<group>"
+      },
+      "6" : {
+        "isa" : "PBXGroup",
+        "children" : [
+          "3"
+        ],
+        "name" : "Products",
         "sourceTree" : "<group>"
       }
     },
 
     "PBXNativeTarget" : {
-      "1" : {
+      "5" : {
         "isa" : "PBXNativeTarget",
-        "buildConfigurationList" : "2",
+        "buildConfigurationList" : "7",
         "buildPhases" : [
-          "3",
-          "4"
+          "8",
+          "9"
         ],
         "buildRules" : [],
         "dependencies" : [],
         "name" : "ios-camera-app",
         "productName" : "ios-camera-app",
-        "productReference" : "2",
+        "productReference" : "3",
         "productType" : "com.apple.product-type.application"
       }
     },
 
     "PBXProject" : {
-      "1" : {
+      "4" : {
         "isa" : "PBXProject",
         "attributes" : {
           "LastUpgradeCheck" : "1500"
         },
-        "buildConfigurationList" : "2",
+        "buildConfigurationList" : "7",
         "compatibilityVersion" : "Xcode 15.0",
         "developmentRegion" : "en",
         "hasScannedForEncodings" : "0",
@@ -86,17 +107,17 @@
           "en"
         ],
         "mainGroup" : "1",
-        "productRefGroup" : "1",
+        "productRefGroup" : "6",
         "projectDirPath" : "",
         "projectRoot" : "",
         "targets" : [
-          "1"
+          "5"
         ]
       }
     },
 
     "PBXResourcesBuildPhase" : {
-      "4" : {
+      "9" : {
         "isa" : "PBXResourcesBuildPhase",
         "buildActionMask" : "2147483647",
         "files" : [],
@@ -105,7 +126,7 @@
     },
 
     "PBXSourcesBuildPhase" : {
-      "3" : {
+      "8" : {
         "isa" : "PBXSourcesBuildPhase",
         "buildActionMask" : "2147483647",
         "files" : [
@@ -118,13 +139,13 @@
     "PBXTargetDependency" : {
       "1" : {
         "isa" : "PBXTargetDependency",
-        "target" : "1",
+        "target" : "5",
         "targetProxy" : "1"
       }
     },
 
     "XCBuildConfiguration" : {
-      "1" : {
+      "6" : {
         "isa" : "XCBuildConfiguration",
         "baseConfigurationReference" : "",
         "buildSettings" : {
@@ -162,7 +183,7 @@
         },
         "name" : "Debug"
       },
-      "2" : {
+      "7" : {
         "isa" : "XCBuildConfiguration",
         "baseConfigurationReference" : "",
         "buildSettings" : {
@@ -196,16 +217,16 @@
     },
 
     "XCConfigurationList" : {
-      "2" : {
+      "7" : {
         "isa" : "XCConfigurationList",
         "buildConfigurations" : [
-          "1",
-          "2"
+          "6",
+          "7"
         ],
         "defaultConfigurationIsVisible" : "0",
         "defaultConfigurationName" : "Debug"
       }
     }
   },
-  "rootObject" : "1"
+  "rootObject" : "4"
 }
