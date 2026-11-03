@@ -1,232 +1,256 @@
-{
-  "archiveVersion" : "1",
-  "classes" : {},
-  "objectVersion" : "50",
-  "objects" : {
-
-    "PBXBuildFile" : {
-      "1" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "2",
-        "settings" : {}
-      },
-      "2" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "3",
-        "settings" : {}
-      }
-    },
-
-    "PBXContainerItemProxy" : {
-      "1" : {
-        "isa" : "PBXContainerItemProxy",
-        "containerPortal" : "4",
-        "proxyType" : "1",
-        "remoteGlobalIDString" : "5",
-        "remoteInfo" : "ios-camera-app"
-      }
-    },
-
-    "PBXFileReference" : {
-      "1" : {
-        "isa" : "PBXFileReference",
-        "path" : "ios-camera-app.xcodeproj",
-        "sourceTree" : "<group>"
-      },
-      "2" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "AppDelegate.swift",
-        "sourceTree" : "<group>"
-      },
-      "3" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "wrapper.application",
-        "includeInIndex" : "0",
-        "path" : "ios-camera-app.app",
-        "sourceTree" : "BUILT_PRODUCTS_DIR"
-      }
-    },
-
-    "PBXFrameworksBuildPhase" : {
-      "1" : {
-        "isa" : "PBXFrameworksBuildPhase",
-        "buildActionMask" : "2147483647",
-        "files" : [],
-        "runOnlyForDeploymentPostprocessing" : "0"
-      }
-    },
-
-    "PBXGroup" : {
-      "1" : {
-        "isa" : "PBXGroup",
-        "children" : [
-          "2",
-          "6"
-        ],
-        "sourceTree" : "<group>"
-      },
-      "6" : {
-        "isa" : "PBXGroup",
-        "children" : [
-          "3"
-        ],
-        "name" : "Products",
-        "sourceTree" : "<group>"
-      }
-    },
-
-    "PBXNativeTarget" : {
-      "5" : {
-        "isa" : "PBXNativeTarget",
-        "buildConfigurationList" : "7",
-        "buildPhases" : [
-          "8",
-          "9"
-        ],
-        "buildRules" : [],
-        "dependencies" : [],
-        "name" : "ios-camera-app",
-        "productName" : "ios-camera-app",
-        "productReference" : "3",
-        "productType" : "com.apple.product-type.application"
-      }
-    },
-
-    "PBXProject" : {
-      "4" : {
-        "isa" : "PBXProject",
-        "attributes" : {
-          "LastUpgradeCheck" : "1500"
-        },
-        "buildConfigurationList" : "7",
-        "compatibilityVersion" : "Xcode 15.0",
-        "developmentRegion" : "en",
-        "hasScannedForEncodings" : "0",
-        "knownRegions" : [
-          "en"
-        ],
-        "mainGroup" : "1",
-        "productRefGroup" : "6",
-        "projectDirPath" : "",
-        "projectRoot" : "",
-        "targets" : [
-          "5"
-        ]
-      }
-    },
-
-    "PBXResourcesBuildPhase" : {
-      "9" : {
-        "isa" : "PBXResourcesBuildPhase",
-        "buildActionMask" : "2147483647",
-        "files" : [],
-        "runOnlyForDeploymentPostprocessing" : "0"
-      }
-    },
-
-    "PBXSourcesBuildPhase" : {
-      "8" : {
-        "isa" : "PBXSourcesBuildPhase",
-        "buildActionMask" : "2147483647",
-        "files" : [
-          "1"
-        ],
-        "runOnlyForDeploymentPostprocessing" : "0"
-      }
-    },
-
-    "PBXTargetDependency" : {
-      "1" : {
-        "isa" : "PBXTargetDependency",
-        "target" : "5",
-        "targetProxy" : "1"
-      }
-    },
-
-    "XCBuildConfiguration" : {
-      "6" : {
-        "isa" : "XCBuildConfiguration",
-        "baseConfigurationReference" : "",
-        "buildSettings" : {
-          "CLANG_ENABLE_OBJC_ARC" : true,
-          "CODE_SIGN_STYLE" : "Automatic",
-          "CURRENT_PROJECT_VERSION" : "1",
-          "DEBUG_INFORMATION_FORMAT" : "dwarf",
-          "GCC_NO_COMMON_BLOCKS" : true,
-          "GCC_PREPROCESSOR_DEFINITIONS" : [
-            "DEBUG=1",
-            "$(inherited)"
-          ],
-          "GENERATE_INFOPLIST_FILE" : false,
-          "INFOPLIST_FILE" : "Info.plist",
-          "IPHONEOS_DEPLOYMENT_TARGET" : "17.0",
-          "MARKETING_VERSION" : "1.0",
-          "MTL_ENABLE_DEBUG_INFO" : true,
-          "MTL_FAST_MATH" : true,
-          "ONLY_ACTIVE_ARCH" : true,
-          "PRODUCT_BUNDLE_IDENTIFIER" : "com.yourcompany.ios-camera-app",
-          "PRODUCT_NAME" : "ios-camera-app",
-          "SUPPORTED_PLATFORMS" : [
-            "iphoneos",
-            "iphonesimulator"
-          ],
-          "SWIFT_ACTIVE_COMPILATION_CONDITIONS" : [
-            "DEBUG"
-          ],
-          "SWIFT_VERSION" : "5.0",
-          "TARGETED_DEVICE_FAMILY" : [
-            "1",
-            "2"
-          ],
-          "VALIDATE_PRODUCT" : true
-        },
-        "name" : "Debug"
-      },
-      "7" : {
-        "isa" : "XCBuildConfiguration",
-        "baseConfigurationReference" : "",
-        "buildSettings" : {
-          "CLANG_ENABLE_OBJC_ARC" : true,
-          "CODE_SIGN_STYLE" : "Automatic",
-          "CURRENT_PROJECT_VERSION" : "1",
-          "DEBUG_INFORMATION_FORMAT" : "dwarf",
-          "GCC_NO_COMMON_BLOCKS" : true,
-          "GENERATE_INFOPLIST_FILE" : false,
-          "INFOPLIST_FILE" : "Info.plist",
-          "IPHONEOS_DEPLOYMENT_TARGET" : "17.0",
-          "MARKETING_VERSION" : "1.0",
-          "MTL_ENABLE_DEBUG_INFO" : false,
-          "MTL_FAST_MATH" : true,
-          "ONLY_ACTIVE_ARCH" : false,
-          "PRODUCT_BUNDLE_IDENTIFIER" : "com.yourcompany.ios-camera-app",
-          "PRODUCT_NAME" : "ios-camera-app",
-          "SUPPORTED_PLATFORMS" : [
-            "iphoneos",
-            "iphonesimulator"
-          ],
-          "SWIFT_VERSION" : "5.0",
-          "TARGETED_DEVICE_FAMILY" : [
-            "1",
-            "2"
-          ],
-          "VALIDATE_PRODUCT" : true
-        },
-        "name" : "Release"
-      }
-    },
-
-    "XCConfigurationList" : {
-      "7" : {
-        "isa" : "XCConfigurationList",
-        "buildConfigurations" : [
-          "6",
-          "7"
-        ],
-        "defaultConfigurationIsVisible" : "0",
-        "defaultConfigurationName" : "Debug"
-      }
-    }
-  },
-  "rootObject" : "4"
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>50</string>
+	<key>objects</key>
+	<dict>
+		<key>PBXBuildFile</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>2</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+		</dict>
+		<key>PBXFileReference</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>path</key>
+				<string>ios-camera-app.xcodeproj</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>2</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>AppDelegate.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+		</dict>
+		<key>PBXFrameworksBuildPhase</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFrameworksBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array/>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>PBXGroup</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>children</key>
+				<array>
+					<string>2</string>
+				</array>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+		</dict>
+		<key>PBXNativeTarget</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXNativeTarget</string>
+				<key>buildConfigurationList</key>
+				<string>2</string>
+				<key>buildPhases</key>
+				<array>
+					<string>3</string>
+					<string>4</string>
+				</array>
+				<key>buildRules</key>
+				<array/>
+				<key>dependencies</key>
+				<array/>
+				<key>name</key>
+				<string>ios-camera-app</string>
+				<key>productName</key>
+				<string>ios-camera-app</string>
+				<key>productReference</key>
+				<string>2</string>
+				<key>productType</key>
+				<string>com.apple.product-type.application</string>
+			</dict>
+		</dict>
+		<key>PBXProject</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXProject</string>
+				<key>attributes</key>
+				<dict>
+					<key>LastUpgradeCheck</key>
+					<integer>1500</integer>
+				</dict>
+				<key>buildConfigurationList</key>
+				<string>2</string>
+				<key>compatibilityVersion</key>
+				<string>Xcode 15.0</string>
+				<key>developmentRegion</key>
+				<string>en</string>
+				<key>hasScannedForEncodings</key>
+				<integer>0</integer>
+				<key>knownRegions</key>
+				<array>
+					<string>en</string>
+				</array>
+				<key>mainGroup</key>
+				<string>1</string>
+				<key>productRefGroup</key>
+				<string>1</string>
+				<key>projectDirPath</key>
+				<string></string>
+				<key>projectRoot</key>
+				<string></string>
+				<key>targets</key>
+				<array>
+					<string>1</string>
+				</array>
+			</dict>
+		</dict>
+		<key>PBXResourcesBuildPhase</key>
+		<dict>
+			<key>4</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXResourcesBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array/>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>PBXSourcesBuildPhase</key>
+		<dict>
+			<key>3</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXSourcesBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array>
+					<string>1</string>
+				</array>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>XCBuildConfiguration</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>XCBuildConfiguration</string>
+				<key>baseConfigurationReference</key>
+				<string></string>
+				<key>buildSettings</key>
+				<dict>
+					<key>CLANG_ENABLE_OBJC_ARC</key>
+					<string>YES</string>
+					<key>CODE_SIGN_STYLE</key>
+					<string>Automatic</string>
+					<key>CURRENT_PROJECT_VERSION</key>
+					<string>1</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf</string>
+					<key>GCC_NO_COMMON_BLOCKS</key>
+					<string>YES</string>
+					<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+					<array>
+						<string>DEBUG=1</string>
+						<string>$(inherited)</string>
+					</array>
+					<key>GENERATE_INFOPLIST_FILE</key>
+					<string>NO</string>
+					<key>INFOPLIST_FILE</key>
+					<string>Info.plist</string>
+					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+					<string>17.0</string>
+					<key>MARKETING_VERSION</key>
+					<string>1.0</string>
+					<key>MTL_ENABLE_DEBUG_INFO</key>
+					<string>YES</string>
+					<key>MTL_FAST_MATH</key>
+					<string>YES</string>
+					<key>ONLY_ACTIVE_ARCH</key>
+					<string>YES</string>
+					<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+					<string>com.yourcompany.ios-camera-app</string>
+					<key>PRODUCT_NAME</key>
+					<string>ios-camera-app</string>
+					<key>SUPPORTED_PLATFORMS</key>
+					<array>
+						<string>iphoneos</string>
+						<string>iphonesimulator</string>
+					</array>
+					<key>SWIFT_ACTIVE_COMPILATION_CONDITIONS</key>
+					<array>
+						<string>DEBUG</string>
+					</array>
+					<key>SWIFT_VERSION</key>
+					<string>5.0</string>
+					<key>TARGETED_DEVICE_FAMILY</key>
+					<array>
+						<string>1</string>
+						<string>2</string>
+					</array>
+					<key>VALIDATE_PRODUCT</key>
+					<string>YES</string>
+				</dict>
+				<key>name</key>
+				<string>Debug</string>
+			</dict>
+		</dict>
+		<key>XCConfigurationList</key>
+		<dict>
+			<key>2</key>
+			<dict>
+				<key>isa</key>
+				<string>XCConfigurationList</string>
+				<key>buildConfigurations</key>
+				<array>
+					<string>1</string>
+				</array>
+				<key>defaultConfigurationIsVisible</key>
+				<integer>0</integer>
+				<key>defaultConfigurationName</key>
+				<string>Debug</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>1</string>
+</dict>
+</plist>
