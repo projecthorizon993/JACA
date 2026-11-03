@@ -1,7 +1,7 @@
 {
-  "archiveVersion" : 1,
+  "archiveVersion" : "1",
   "classes" : {},
-  "objectVersion" : 50,
+  "objectVersion" : "50",
   "objects" : {
 
     "PBXBuildFile" : {
