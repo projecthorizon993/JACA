@@ -55,7 +55,7 @@
           <key>files</key>
           <array />
           <key>runOnlyForDeploymentPostprocessing</key>
-          <False />
+          <false />
         </dict>
       </dict>
       <key>PBXGroup</key>
@@ -149,7 +149,7 @@
           <key>files</key>
           <array />
           <key>runOnlyForDeploymentPostprocessing</key>
-          <False />
+          <false />
         </dict>
       </dict>
       <key>PBXSourcesBuildPhase</key>
@@ -165,7 +165,7 @@
             <string>1</string>
           </array>
           <key>runOnlyForDeploymentPostprocessing</key>
-          <False />
+          <false />
         </dict>
       </dict>
       <key>XCBuildConfiguration</key>
@@ -180,7 +180,7 @@
           <key>buildSettings</key>
           <dict>
             <key>CLANG_ENABLE_OBJC_ARC</key>
-            <True />
+            <true />
             <key>CODE_SIGN_STYLE</key>
             <string>Automatic</string>
             <key>CURRENT_PROJECT_VERSION</key>
@@ -188,14 +188,14 @@
             <key>DEBUG_INFORMATION_FORMAT</key>
             <string>dwarf</string>
             <key>GCC_NO_COMMON_BLOCKS</key>
-            <True />
+            <true />
             <key>GCC_PREPROCESSOR_DEFINITIONS</key>
             <array>
               <string>DEBUG=1</string>
               <string>$(inherited)</string>
             </array>
             <key>GENERATE_INFOPLIST_FILE</key>
-            <False />
+            <false />
             <key>INFOPLIST_FILE</key>
             <string>Info.plist</string>
             <key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -203,11 +203,11 @@
             <key>MARKETING_VERSION</key>
             <string>1.0</string>
             <key>MTL_ENABLE_DEBUG_INFO</key>
-            <True />
+            <true />
             <key>MTL_FAST_MATH</key>
-            <True />
+            <true />
             <key>ONLY_ACTIVE_ARCH</key>
-            <True />
+            <true />
             <key>PRODUCT_BUNDLE_IDENTIFIER</key>
             <string>com.yourcompany.ios-camera-app</string>
             <key>PRODUCT_NAME</key>
@@ -229,7 +229,7 @@
               <string>2</string>
             </array>
             <key>VALIDATE_PRODUCT</key>
-            <True />
+            <true />
           </dict>
           <key>name</key>
           <string>Debug</string>
@@ -246,7 +246,7 @@
             <string>1</string>
           </array>
           <key>defaultConfigurationIsVisible</key>
-          <False />
+          <false />
           <key>defaultConfigurationName</key>
           <string>Debug</string>
         </dict>
