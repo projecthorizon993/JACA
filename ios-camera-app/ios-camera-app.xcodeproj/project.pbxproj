@@ -16,7 +16,7 @@
       "1" : {
         "isa" : "PBXContainerItemProxy",
         "containerPortal" : "1",
-        "proxyType" : 1,
+        "proxyType" : "1",
         "remoteGlobalIDString" : "1",
         "remoteInfo" : "ios-camera-app"
       }
@@ -39,9 +39,9 @@
     "PBXFrameworksBuildPhase" : {
       "1" : {
         "isa" : "PBXFrameworksBuildPhase",
-        "buildActionMask" : 2147483647,
+        "buildActionMask" : "2147483647",
         "files" : [],
-        "runOnlyForDeploymentPostprocessing" : 0
+        "runOnlyForDeploymentPostprocessing" : "0"
       }
     },
 
@@ -76,12 +76,12 @@
       "1" : {
         "isa" : "PBXProject",
         "attributes" : {
-          "LastUpgradeCheck" : 1500
+          "LastUpgradeCheck" : "1500"
         },
         "buildConfigurationList" : "2",
         "compatibilityVersion" : "Xcode 15.0",
         "developmentRegion" : "en",
-        "hasScannedForEncodings" : 0,
+        "hasScannedForEncodings" : "0",
         "knownRegions" : [
           "en"
         ],
@@ -98,20 +98,20 @@
     "PBXResourcesBuildPhase" : {
       "4" : {
         "isa" : "PBXResourcesBuildPhase",
-        "buildActionMask" : 2147483647,
+        "buildActionMask" : "2147483647",
         "files" : [],
-        "runOnlyForDeploymentPostprocessing" : 0
+        "runOnlyForDeploymentPostprocessing" : "0"
       }
     },
 
     "PBXSourcesBuildPhase" : {
       "3" : {
         "isa" : "PBXSourcesBuildPhase",
-        "buildActionMask" : 2147483647,
+        "buildActionMask" : "2147483647",
         "files" : [
           "1"
         ],
-        "runOnlyForDeploymentPostprocessing" : 0
+        "runOnlyForDeploymentPostprocessing" : "0"
       }
     },
 
@@ -130,7 +130,7 @@
         "buildSettings" : {
           "CLANG_ENABLE_OBJC_ARC" : true,
           "CODE_SIGN_STYLE" : "Automatic",
-          "CURRENT_PROJECT_VERSION" : 1,
+          "CURRENT_PROJECT_VERSION" : "1",
           "DEBUG_INFORMATION_FORMAT" : "dwarf",
           "GCC_NO_COMMON_BLOCKS" : true,
           "GCC_PREPROCESSOR_DEFINITIONS" : [
@@ -168,7 +168,7 @@
         "buildSettings" : {
           "CLANG_ENABLE_OBJC_ARC" : true,
           "CODE_SIGN_STYLE" : "Automatic",
-          "CURRENT_PROJECT_VERSION" : 1,
+          "CURRENT_PROJECT_VERSION" : "1",
           "DEBUG_INFORMATION_FORMAT" : "dwarf",
           "GCC_NO_COMMON_BLOCKS" : true,
           "GENERATE_INFOPLIST_FILE" : false,
@@ -202,7 +202,7 @@
           "1",
           "2"
         ],
-        "defaultConfigurationIsVisible" : 0,
+        "defaultConfigurationIsVisible" : "0",
         "defaultConfigurationName" : "Debug"
       }
     }
