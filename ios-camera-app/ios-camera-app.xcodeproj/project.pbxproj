@@ -152,7 +152,7 @@
           <key>mainGroup</key>
           <string>1</string>
           <key>productRefGroup</key>
-          <string>1</string>
+          <string>6</string>
           <key>projectDirPath</key>
           <string>
           </string>
