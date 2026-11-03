@@ -552,6 +552,25 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         }
     }
 
+    /// Capture time lapse sequence - capture frames at intervals
+    private func captureTimeLapse(interval: Double, count: Int, watermark: WatermarkSettings) async throws -> [UIImage] {
+        var images: [UIImage] = []
+
+        for i in 0..<count {
+            let image = try await captureSingleExposure(ev: 0.0, watermark: watermark)
+            images.append(image)
+
+            // Wait interval between captures (except for last)
+            if i < count - 1 {
+                try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+            }
+        }
+
+        return images
+    }
+
+    /// Apply Leica color profile to a CIImage (used for captured photos).
+
     /// Capture bracketed exposure sequence (-1EV, 0EV, +1EV) and return all images.
     private func captureBracketed(settings: WatermarkSettings) async throws -> Image {
         let evValues: [Float] = [-1.0, 0.0, 1.0]

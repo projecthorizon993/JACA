@@ -62,6 +62,7 @@ final class CameraModel {
     var panoramicImages: [UIImage] = []     // Panoramic images captured
     var isPanoramaMode: Bool = false   // Panorama mode active
     var slowMotionEnabled: Bool = false   // Slow motion video recording
+    var timeLapseEnabled: Bool = false   // Time lapse video recording
     var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)
