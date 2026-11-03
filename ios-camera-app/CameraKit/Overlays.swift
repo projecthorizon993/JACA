@@ -18,6 +18,46 @@ struct GridOverlay: View {
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
+
+    // MARK: - Face detection overlay
+
+    /// Draws bounding boxes around detected faces in the viewfinder.
+    struct FaceDetectionOverlay: View {
+        var faces: [CGRect]
+
+        var body: some View {
+            GeometryReader { g in
+                ForEach(Array(faces.enumerated()), id: \.offset) { index, rect in
+                    // Convert Vision coordinates (origin bottom-left) to screen coordinates (origin top-left)
+                    let box = CGRect(
+                        x: rect.origin.x * g.size.width,
+                        y: (1.0 - rect.origin.y - rect.height) * g.size.height,
+                        width: rect.width * g.size.width,
+                        height: rect.height * g.size.height
+                    )
+                    Path { p in
+                        p.addRect(box)
+                    }
+                    .stroke(Color.green, lineWidth: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color.green, lineWidth: 2)
+                            .frame(width: box.width, height: box.height)
+                            .offset(x: box.origin.x, y: box.origin.y)
+                    )
+                    Text("Face \(index + 1)")
+                        .font(.caption2.bold())
+                        .padding(4)
+                        .background(Color.black.opacity(0.6))
+                        .foregroundColor(.white)
+                        .cornerRadius(4)
+                        .offset(x: box.origin.x + 4, y: box.origin.y - 24)
+                }
+            }
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+    }
 }
 
 // MARK: - Histogram

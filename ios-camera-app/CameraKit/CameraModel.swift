@@ -50,6 +50,7 @@ final class CameraModel {
     var showZebra = false
     var captureCount = 0
     var lastPhoto: Image? = nil
+    var faceBounds: [CGRect] = []
 
     // Real-time histogram from camera engine (48 bins, 0…1)
     var histogram: [Double] = Array(repeating: 0.0, count: 48)

@@ -236,6 +236,12 @@ class CameraViewController: UIViewController {
             self.screen.model.updateHistogram(self.cameraEngine.histogram)
         }
 
+        // Wire face bounds from camera engine to model
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.screen.model.faceBounds = self.cameraEngine.faceBounds
+        }
+
         // Wire capture format selector to CameraModel
         formatSegmentedControl.addTarget(self, action: #selector(formatChanged(_:)), for: .valueChanged)
 

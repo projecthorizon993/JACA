@@ -34,6 +34,7 @@ struct CameraScreen<Viewfinder: View>: View {
                         }
                         .transition(.panelPop)
                     }
+                    if !model.faceBounds.isEmpty { FaceDetectionOverlay(faces: model.faceBounds) }
                     ViewfinderTools(m: model)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
 
