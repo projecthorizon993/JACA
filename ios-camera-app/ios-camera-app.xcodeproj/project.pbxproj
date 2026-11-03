@@ -192,8 +192,7 @@
             <key>GCC_PREPROCESSOR_DEFINITIONS</key>
             <array>
               <string>DEBUG=1</string>
-              <string>
-              </string>
+              <string>$(inherited)</string>
             </array>
             <key>GENERATE_INFOPLIST_FILE</key>
             <False />
