@@ -59,6 +59,54 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     /// Current device roll angle in degrees (for level indicator)
     var levelDegrees: Double = 0.0
 
+    /// AI scene detection
+    var aiSceneType: String = "none"   // "portrait", "landscape", "food", "night", "pet", etc.
+    var aiSceneConfidence: Double = 0.0
+
+    /// Apply AI scene detection to current frame - selects appropriate LUT based on detected scene
+    func applyAIFilterIfEnabled() {
+        guard let model = cameraModel, model.aiSceneDetectionEnabled else { return }
+        
+        // Simulate AI scene detection based on histogram
+        let sceneType = detectSceneFromHistogram(histogram)
+        aiSceneType = sceneType.0
+        aiSceneConfidence = sceneType.1
+        
+        // Apply corresponding LUT
+        let lutName: String?
+        switch aiSceneType {
+        case "portrait": lutName = "aifilter_portrait"
+        case "sunset": lutName = "aifilter_sunset"
+        case "beach": lutName = "aifilter_beach"
+        case "cyberpunk": lutName = "aifilter_cyberpunk"
+        case "night": lutName = "aifilter_night"
+        default: lutName = nil
+        }
+        
+        if let lutName = lutName {
+            currentLUT = LUTManager.loadLUT(named: lutName)
+            currentLUTIntensity = 0.7
+        }
+    }
+
+    /// Simple scene detection from histogram - placeholder for real AI model
+    private func detectSceneFromHistogram(_ bins: [Double]) -> (String, Double) {
+        // Simple heuristic: detect scene type from luminance histogram
+        let darkPixels = bins[0..<8].reduce(0, +)
+        let brightPixels = bins[40..<48].reduce(0, +)
+        let midPixels = 1.0 - darkPixels - brightPixels
+        
+        if darkPixels > 0.6 {
+            return ("night", min(darkPixels, 0.95))
+        } else if brightPixels > 0.6 {
+            return ("sunset", min(brightPixels, 0.9))
+        } else if midPixels > 0.6 {
+            return ("portrait", min(midPixels, 0.85))
+        } else {
+            return ("normal", 0.5)
+        }
+    }
+
     // MARK: - LUT filter pipeline (from decompiled Android APKs)
 
     private let filterPipeline = FilterPipeline()
@@ -623,7 +671,8 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         // Detect faces from pixel buffer
         computeFaces(from: pixelBuffer)
 
-        // Apply LUT filter pipeline with Leica color + watermark and dispatch filtered frame to main thread
+        // AI scene detection
+        applyAIFilterIfEnabled()
         let settings = FilterSettings(
             lut: currentLUT,
             intensity: currentLUTIntensity,

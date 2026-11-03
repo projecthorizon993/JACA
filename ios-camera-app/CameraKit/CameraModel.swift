@@ -55,6 +55,7 @@ final class CameraModel {
     var lastPhoto: Image? = nil
     var faceBounds: [CGRect] = []
     var nightModeEnabled: Bool = false   // Night mode - enhanced low light
+    var aiSceneDetectionEnabled: Bool = false   // AI scene detection filter
     var levelDegrees: Double = 0.0       // Device roll angle in degrees performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)

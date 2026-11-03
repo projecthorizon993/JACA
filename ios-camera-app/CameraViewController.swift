@@ -34,6 +34,7 @@ class CameraViewController: UIViewController {
     private let beautyIntensitySlider = UISlider()
     private let portraitIntensitySlider = UISlider()
     private let nightModeSlider = UISlider()
+    private let aiSceneDetectionToggle = UISwitch()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -146,6 +147,11 @@ class CameraViewController: UIViewController {
         nightModeSlider.addTarget(self, action: #selector(nightIntensityChanged(_:)), for: .valueChanged)
         view.addSubview(nightModeSlider)
 
+        // AI scene detection toggle
+        aiSceneDetectionToggle.translatesAutoresizingMaskIntoConstraints = false
+        aiSceneDetectionToggle.addTarget(self, action: #selector(aiSceneDetectionToggled(_:)), for: .valueChanged)
+        view.addSubview(aiSceneDetectionToggle)
+
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
         flipButton.setImage(UIImage(systemName: "camera.rotate"), for: .normal)
@@ -254,6 +260,10 @@ class CameraViewController: UIViewController {
             nightModeSlider.topAnchor.constraint(equalTo: portraitIntensitySlider.bottomAnchor, constant: 6),
             nightModeSlider.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             nightModeSlider.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            aiSceneDetectionToggle.topAnchor.constraint(equalTo: nightModeSlider.bottomAnchor, constant: 6),
+            aiSceneDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            aiSceneDetectionToggle.widthAnchor.constraint(equalToConstant: 50),
         ])
     }
 
@@ -380,6 +390,11 @@ class CameraViewController: UIViewController {
     @objc private func nightIntensityChanged(_ sender: UISlider) {
         cameraEngine.filterPipeline.nightIntensity = sender.value
         screen.model.nightIntensity = sender.value
+    }
+
+    @objc private func aiSceneDetectionToggled(_ sender: UISwitch) {
+        screen.model.aiSceneDetectionEnabled = sender.isOn
+        cameraEngine.cameraModel = screen.model
     }
 
     @objc private func cameraModeChanged(_ sender: UISegmentedControl) {
