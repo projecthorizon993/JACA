@@ -21,7 +21,7 @@
       "1" : {
         "isa" : "PBXContainerItemProxy",
         "containerPortal" : "4",
-        "proxyType" : "1",
+        "proxyType" : 1,
         "remoteGlobalIDString" : "5",
         "remoteInfo" : "ios-camera-app"
       }
@@ -42,7 +42,7 @@
       "3" : {
         "isa" : "PBXFileReference",
         "explicitFileType" : "wrapper.application",
-        "includeInIndex" : "0",
+        "includeInIndex" : false,
         "path" : "ios-camera-app.app",
         "sourceTree" : "BUILT_PRODUCTS_DIR"
       }
@@ -51,9 +51,9 @@
     "PBXFrameworksBuildPhase" : {
       "1" : {
         "isa" : "PBXFrameworksBuildPhase",
-        "buildActionMask" : "2147483647",
+        "buildActionMask" : 2147483647,
         "files" : [],
-        "runOnlyForDeploymentPostprocessing" : "0"
+        "runOnlyForDeploymentPostprocessing" : 0
       }
     },
 
@@ -97,12 +97,12 @@
       "4" : {
         "isa" : "PBXProject",
         "attributes" : {
-          "LastUpgradeCheck" : "1500"
+          "LastUpgradeCheck" : 1500
         },
         "buildConfigurationList" : "7",
         "compatibilityVersion" : "Xcode 15.0",
         "developmentRegion" : "en",
-        "hasScannedForEncodings" : "0",
+        "hasScannedForEncodings" : 0,
         "knownRegions" : [
           "en"
         ],
@@ -119,20 +119,20 @@
     "PBXResourcesBuildPhase" : {
       "9" : {
         "isa" : "PBXResourcesBuildPhase",
-        "buildActionMask" : "2147483647",
+        "buildActionMask" : 2147483647,
         "files" : [],
-        "runOnlyForDeploymentPostprocessing" : "0"
+        "runOnlyForDeploymentPostprocessing" : 0
       }
     },
 
     "PBXSourcesBuildPhase" : {
       "8" : {
         "isa" : "PBXSourcesBuildPhase",
-        "buildActionMask" : "2147483647",
+        "buildActionMask" : 2147483647,
         "files" : [
           "1"
         ],
-        "runOnlyForDeploymentPostprocessing" : "0"
+        "runOnlyForDeploymentPostprocessing" : 0
       }
     },
 
@@ -223,7 +223,7 @@
           "6",
           "7"
         ],
-        "defaultConfigurationIsVisible" : "0",
+        "defaultConfigurationIsVisible" : false,
         "defaultConfigurationName" : "Debug"
       }
     }
