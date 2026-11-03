@@ -36,6 +36,7 @@ struct CameraScreen<Viewfinder: View>: View {
                     }
                     if !model.faceBounds.isEmpty { FaceDetectionOverlay(faces: model.faceBounds) }
                     if model.levelDegrees != 0 { LevelOverlay(rollDegrees: model.levelDegrees) }
+                    if model.showZebra { ZebraOverlay(zebraMask: model.zebraMask) }
                     ViewfinderTools(m: model)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
 

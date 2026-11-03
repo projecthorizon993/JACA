@@ -186,3 +186,19 @@ struct ViewfinderTools: View {
         .padding(12)
     }
 }
+
+// MARK: - Zebra Stripes
+
+/// Zebra stripes overlay shows overexposed areas (clipped highlights) in the viewfinder.
+struct ZebraOverlay: View {
+    var zebraMask: CIImage? = nil
+
+    var body: some View {
+        if let zebraCIImage = zebraMask {
+            Image(uiImage: UIImage(cgImage: CIContext().createCGImage(zebraCIImage, from: zebraCIImage.extent)!))
+                .resizable()
+                .scaledToFill()
+                .opacity(0.6)
+        }
+    }
+}

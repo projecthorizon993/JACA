@@ -56,7 +56,8 @@ final class CameraModel {
     var faceBounds: [CGRect] = []
     var nightModeEnabled: Bool = false   // Night mode - enhanced low light
     var aiSceneDetectionEnabled: Bool = false   // AI scene detection filter
-    var levelDegrees: Double = 0.0       // Device roll angle in degrees performance
+    var levelDegrees: Double = 0.0       // Device roll angle in degrees
+    var zebraMask: CIImage? = nil       // Zebra stripes mask for overexposure performance
 
     // Real-time histogram from camera engine (48 bins, 0…1)
     var histogram: [Double] = Array(repeating: 0.0, count: 48)

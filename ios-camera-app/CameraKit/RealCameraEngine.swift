@@ -673,6 +673,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
         // AI scene detection
         applyAIFilterIfEnabled()
+
+        // Detect zebra stripes (overexposed areas)
+        computeZebraMask(from: pixelBuffer)
         let settings = FilterSettings(
             lut: currentLUT,
             intensity: currentLUTIntensity,
