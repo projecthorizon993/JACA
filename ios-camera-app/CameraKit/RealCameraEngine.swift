@@ -13,6 +13,7 @@ import CoreImage
 import CoreVideo
 import CoreLocation
 import Photos
+import Vision
 
 /// Real camera engine backing CameraKit. Implements CameraEngine using AVFoundation.
 final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate {
@@ -40,6 +41,12 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
 
     private(set) var histogram: [Double] = Array(repeating: 0.0, count: 48)
     private let ciContext = CIContext()
+
+    // MARK: - Face detection
+
+    private(set) var faceBounds: [CGRect] = []
+    private let faceRequest = VNDetectFaceRectanglesRequest()
+    private let visionQueue = DispatchQueue(label: "camera.vision.queue", qos: .userInteractive)
 
     // MARK: - LUT filter pipeline (from decompiled Android APKs)
 
@@ -471,6 +478,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         // Compute 48-bin histogram from luminance
         computeHistogram(from: pixelBuffer)
 
+        // Detect faces from pixel buffer
+        computeFaces(from: pixelBuffer)
+
         // Apply LUT filter pipeline with Leica color + watermark and dispatch filtered frame to main thread
         let settings = FilterSettings(
             lut: currentLUT,
@@ -551,6 +561,23 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
         // Update on main thread for UI
         DispatchQueue.main.async { [weak self] in
             self?.histogram = bins
+        }
+    }
+
+    /// Detect faces in a pixel buffer using Vision framework face detection.
+    private func computeFaces(from pixelBuffer: CVPixelBuffer) {
+        visionQueue.async { [weak self] in
+            let requestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+            do {
+                try requestHandler.perform([self.faceRequest])
+                guard let observations = self.faceRequest.results else { return }
+                let faceBounds = observations.map { $0.boundingBox }
+                DispatchQueue.main.async { [weak self] in
+                    self?.faceBounds = faceBounds
+                }
+            } catch {
+                print("Face detection failed: \(error)")
+            }
         }
     }
 }
