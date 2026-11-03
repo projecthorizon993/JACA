@@ -37,6 +37,7 @@ class CameraViewController: UIViewController {
     private let nightModeSlider = UISlider()
     private let aiSceneDetectionToggle = UISwitch()
     private let mlActionDetectionToggle = UISwitch()
+    private let dualCameraToggle = UISwitch()
     private let flipButton = UIButton(type: .system)
     private let cameraModeControl = UISegmentedControl(items: CameraMode.allCases.map { $0.rawValue })
 
@@ -155,15 +156,20 @@ class CameraViewController: UIViewController {
         nightModeSlider.addTarget(self, action: #selector(nightIntensityChanged(_:)), for: .valueChanged)
         view.addSubview(nightModeSlider)
 
+        // ML action detection toggle
+        mlActionDetectionToggle.translatesAutoresizingMaskIntoConstraints = false
+        mlActionDetectionToggle.addTarget(self, action: #selector(mlActionDetectionToggled(_:)), for: .valueChanged)
+        view.addSubview(mlActionDetectionToggle)
+
         // AI scene detection toggle
         aiSceneDetectionToggle.translatesAutoresizingMaskIntoConstraints = false
         aiSceneDetectionToggle.addTarget(self, action: #selector(aiSceneDetectionToggled(_:)), for: .valueChanged)
         view.addSubview(aiSceneDetectionToggle)
 
-        // ML action detection toggle
-        mlActionDetectionToggle.translatesAutoresizingMaskIntoConstraints = false
-        mlActionDetectionToggle.addTarget(self, action: #selector(mlActionDetectionToggled(_:)), for: .valueChanged)
-        view.addSubview(mlActionDetectionToggle)
+        // Dual camera toggle
+        dualCameraToggle.translatesAutoresizingMaskIntoConstraints = false
+        dualCameraToggle.addTarget(self, action: #selector(dualCameraToggled(_:)), for: .valueChanged)
+        view.addSubview(dualCameraToggle)
 
         // Flip camera button
         flipButton.translatesAutoresizingMaskIntoConstraints = false
@@ -282,6 +288,14 @@ class CameraViewController: UIViewController {
             aiSceneDetectionToggle.topAnchor.constraint(equalTo: nightModeSlider.bottomAnchor, constant: 6),
             aiSceneDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             aiSceneDetectionToggle.widthAnchor.constraint(equalToConstant: 50),
+
+            mlActionDetectionToggle.topAnchor.constraint(equalTo: aiSceneDetectionToggle.bottomAnchor, constant: 6),
+            mlActionDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            mlActionDetectionToggle.widthAnchor.constraint(equalToConstant: 50),
+
+            dualCameraToggle.topAnchor.constraint(equalTo: mlActionDetectionToggle.bottomAnchor, constant: 6),
+            dualCameraToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            dualCameraToggle.widthAnchor.constraint(equalToConstant: 50),
 
             mlActionDetectionToggle.topAnchor.constraint(equalTo: aiSceneDetectionToggle.bottomAnchor, constant: 6),
             mlActionDetectionToggle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -427,6 +441,11 @@ class CameraViewController: UIViewController {
 
     @objc private func mlActionDetectionToggled(_ sender: UISwitch) {
         screen.model.mlActionDetectionEnabled = sender.isOn
+        cameraEngine.cameraModel = screen.model
+    }
+
+    @objc private func dualCameraToggled(_ sender: UISwitch) {
+        screen.model.dualCameraEnabled = sender.isOn
         cameraEngine.cameraModel = screen.model
     }
 
