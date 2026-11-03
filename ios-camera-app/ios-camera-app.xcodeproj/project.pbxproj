@@ -1,433 +1,655 @@
-{
-  "archiveVersion" : 1,
-  "classes" : {},
-  "objectVersion" : 50,
-  "objects" : {
-
-    "PBXBuildFile" : {
-      "1" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "2",
-        "settings" : {}
-      },
-      "3" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "4",
-        "settings" : {}
-      },
-      "5" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "6",
-        "settings" : {}
-      },
-      "7" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "8",
-        "settings" : {}
-      },
-      "9" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "10",
-        "settings" : {}
-      },
-      "11" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "12",
-        "settings" : {}
-      },
-      "13" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "14",
-        "settings" : {}
-      },
-      "15" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "16",
-        "settings" : {}
-      },
-      "17" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "18",
-        "settings" : {}
-      },
-      "19" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "20",
-        "settings" : {}
-      },
-      "21" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "22",
-        "settings" : {}
-      },
-      "23" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "24",
-        "settings" : {}
-      },
-      "25" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "26",
-        "settings" : {}
-      },
-      "27" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "28",
-        "settings" : {}
-      },
-      "29" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "30",
-        "settings" : {}
-      },
-      "31" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "32",
-        "settings" : {}
-      },
-      "33" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "34",
-        "settings" : {}
-      },
-      "35" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "36",
-        "settings" : {}
-      },
-      "37" : {
-        "isa" : "PBXBuildFile",
-        "fileRef" : "38",
-        "settings" : {}
-      }
-    },
-
-    "PBXFileReference" : {
-      "1" : {
-        "isa" : "PBXFileReference",
-        "path" : "ios-camera-app.xcodeproj",
-        "sourceTree" : "<group>"
-      },
-      "2" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "AppDelegate.swift",
-        "sourceTree" : "<group>"
-      },
-      "4" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "SceneDelegate.swift",
-        "sourceTree" : "<group>"
-      },
-      "6" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraViewController.swift",
-        "sourceTree" : "<group>"
-      },
-      "8" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraMode.swift",
-        "sourceTree" : "<group>"
-      },
-      "10" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "FilterPipeline.swift",
-        "sourceTree" : "<group>"
-      },
-      "12" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "LUTManager.swift",
-        "sourceTree" : "<group>"
-      },
-      "14" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "MetalFilterPipeline.swift",
-        "sourceTree" : "<group>"
-      },
-      "16" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "FilmGrainView.swift",
-        "sourceTree" : "<group>"
-      },
-      "18" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "WatermarkManager.swift",
-        "sourceTree" : "<group>"
-      },
-      "20" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "StickerOverlayView.swift",
-        "sourceTree" : "<group>"
-      },
-      "22" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/CameraModel.swift",
-        "sourceTree" : "<group>"
-      },
-      "24" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/CameraScreen.swift",
-        "sourceTree" : "<group>"
-      },
-      "26" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/Controls.swift",
-        "sourceTree" : "<group>"
-      },
-      "28" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/DialRuler.swift",
-        "sourceTree" : "<group>"
-      },
-      "30" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/Motion.swift",
-        "sourceTree" : "<group>"
-      },
-      "32" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/Overlays.swift",
-        "sourceTree" : "<group>"
-      },
-      "34" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/RealCameraEngine.swift",
-        "sourceTree" : "<group>"
-      },
-      "36" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "CameraKit/Tokens.swift",
-        "sourceTree" : "<group>"
-      },
-      "38" : {
-        "isa" : "PBXFileReference",
-        "explicitFileType" : "sourcecode.swift",
-        "path" : "Shaders.metal",
-        "sourceTree" : "<group>"
-      }
-    },
-
-    "PBXFrameworksBuildPhase" : {
-      "1" : {
-        "isa" : "PBXFrameworksBuildPhase",
-        "buildActionMask" : 2147483647,
-        "files" : [],
-        "runOnlyForDeploymentPostprocessing" : 0
-      }
-    },
-
-    "PBXGroup" : {
-      "1" : {
-        "isa" : "PBXGroup",
-        "children" : [
-          "2",
-          "4",
-          "6",
-          "8",
-          "10",
-          "12",
-          "14",
-          "16",
-          "18",
-          "20",
-          "22",
-          "24",
-          "26",
-          "28",
-          "30",
-          "32",
-          "34",
-          "36",
-          "38"
-        ],
-        "sourceTree" : "<group>"
-      }
-    },
-
-    "PBXNativeTarget" : {
-      "1" : {
-        "isa" : "PBXNativeTarget",
-        "buildConfigurationList" : "2",
-        "buildPhases" : [
-          "3",
-          "4"
-        ],
-        "buildRules" : [],
-        "dependencies" : [],
-        "name" : "ios-camera-app",
-        "productName" : "ios-camera-app",
-        "productReference" : "2",
-        "productType" : "com.apple.product-type.application"
-      }
-    },
-
-    "PBXProject" : {
-      "1" : {
-        "isa" : "PBXProject",
-        "attributes" : {
-          "LastUpgradeCheck" : 1500
-        },
-        "buildConfigurationList" : "2",
-        "compatibilityVersion" : "Xcode 15.0",
-        "developmentRegion" : "en",
-        "hasScannedForEncodings" : 0,
-        "knownRegions" : [
-          "en"
-        ],
-        "mainGroup" : "1",
-        "productRefGroup" : "1",
-        "projectDirPath" : "",
-        "projectRoot" : "",
-        "targets" : [
-          "1"
-        ]
-      }
-    },
-
-    "PBXResourcesBuildPhase" : {
-      "4" : {
-        "isa" : "PBXResourcesBuildPhase",
-        "buildActionMask" : 2147483647,
-        "files" : [
-          "37"
-        ],
-        "runOnlyForDeploymentPostprocessing" : 0
-      }
-    },
-
-    "PBXSourcesBuildPhase" : {
-      "3" : {
-        "isa" : "PBXSourcesBuildPhase",
-        "buildActionMask" : 2147483647,
-        "files" : [
-          "1",
-          "3",
-          "5",
-          "7",
-          "9",
-          "11",
-          "13",
-          "15",
-          "17",
-          "19",
-          "21",
-          "23",
-          "25",
-          "27",
-          "29",
-          "31",
-          "33",
-          "35"
-        ],
-        "runOnlyForDeploymentPostprocessing" : 0
-      }
-    },
-
-    "XCBuildConfiguration" : {
-      "1" : {
-        "isa" : "XCBuildConfiguration",
-        "baseConfigurationReference" : "",
-        "buildSettings" : {
-          "ALWAYS_SEARCH_USER_PATHS" : "NO",
-          "CLANG_ANALYZER_NONNULL" : "YES",
-          "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION" : "YES_AGGRESSIVE",
-          "CLANG_CXX_LANGUAGE_STANDARD" : "gnu++14",
-          "CLANG_CXX_LIBRARY" : "libc++",
-          "CLANG_ENABLE_MODULES" : "YES",
-          "CLANG_ENABLE_OBJC_ARC" : "YES",
-          "CLANG_ENABLE_OBJC_WEAK" : "YES",
-          "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING" : "YES",
-          "CLANG_WARN_BOOL_CONVERSION" : "YES",
-          "CLANG_WARN_COMMA" : "YES",
-          "CLANG_WARN_CONSTANT_CONVERSION" : "YES",
-          "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS" : "YES",
-          "CLANG_WARN_DIRECT_OBJC_ISA_USAGE" : "YES_ERROR",
-          "CLANG_WARN_DOCUMENTATION_COMMENTS" : "YES",
-          "CLANG_WARN_EMPTY_BODY" : "YES",
-          "CLANG_WARN_ENUM_CONVERSION" : "YES",
-          "CLANG_WARN_INFINITE_RECURSION" : "YES",
-          "CLANG_WARN_INT_CONVERSION" : "YES",
-          "CLANG_WARN_NON_LITERAL_NULL_CONVERSION" : "YES",
-          "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF" : "YES",
-          "CLANG_WARN_OBJC_LITERAL_CONVERSION" : "YES",
-          "CLANG_WARN_OBJC_ROOT_CLASS" : "YES_ERROR",
-          "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER" : "YES",
-          "CLANG_WARN_RANGE_LOOP_ANALYSIS" : "YES",
-          "CLANG_WARN_STRICT_PROTOTYPES" : "YES",
-          "CLANG_WARN_SUSPICIOUS_MOVE" : "YES",
-          "CLANG_WARN_UNREACHABLE_CODE" : "YES",
-          "CLANG_WARN__DUPLICATE_METHOD_MATCH" : "YES_ERROR",
-          "CODE_SIGN_IDENTITY" : "Apple Development",
-          "CODE_SIGN_STYLE" : "Manual",
-          "COPY_PHASE_STRIP" : "NO",
-          "DEBUG_INFORMATION_FORMAT" : "dwarf",
-          "ENABLE_STRICT_OBJC_MSGSEND" : "YES",
-          "ENABLE_TESTABILITY" : "YES",
-          "GCC_C_LANGUAGE_STANDARD" : "gnu11",
-          "GCC_DYNAMIC_NO_PIC" : "NO",
-          "GCC_NO_COMMON_BLOCKS" : "YES",
-          "GCC_OPTIMIZATION_LEVEL" : 0,
-          "GCC_PREPROCESSOR_DEFINITIONS" : [
-            "DEBUG=1",
-            "$(inherited)"
-          ],
-          "GCC_WARN_64_TO_32_BIT_CONVERSION" : "YES",
-          "GCC_WARN_ABOUT_RETURN_TYPE" : "YES_ERROR",
-          "GCC_WARN_UNDECLARED_SELECTOR" : "YES",
-          "GCC_WARN_UNINITIALIZED_AUTOS" : "YES_AGGRESSIVE",
-          "GCC_WARN_UNUSED_FUNCTION" : "YES",
-          "GCC_WARN_UNUSED_VARIABLE" : "YES",
-          "IPHONEOS_DEPLOYMENT_TARGET" : "17.0",
-          "MACOSX_DEPLOYMENT_TARGET" : "14.0",
-          "MTL_ENABLE_DEBUG_INFO" : "YES",
-          "MTL_FAST_MATH" : "YES",
-          "ONLY_ACTIVE_ARCH" : "YES",
-          "SDKROOT" : "iphoneos",
-          "SUPPORTED_PLATFORMS" : [
-            "iphoneos",
-            "iphonesimulator"
-          ],
-          "SWIFT_ACTIVE_COMPILATION_CONDITIONS" : [
-            "DEBUG"
-          ],
-          "SWIFT_VERSION" : "5.0",
-          "TARGETED_DEVICE_FAMILY" : [
-            "1",
-            "2"
-          ],
-          "VALIDATE_PRODUCT" : "YES"
-        },
-        "name" : "Debug"
-      }
-    },
-
-    "XCConfigurationList" : {
-      "2" : {
-        "isa" : "XCConfigurationList",
-        "buildConfigurations" : [
-          "1"
-        ],
-        "defaultConfigurationIsVisible" : 0,
-        "defaultConfigurationName" : "Debug"
-      }
-    }
-  },
-  "rootObject" : "1"
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<integer>1</integer>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<integer>50</integer>
+	<key>objects</key>
+	<dict>
+		<key>PBXBuildFile</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>2</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>3</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>4</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>5</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>6</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>7</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>8</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>9</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>10</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>11</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>12</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>13</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>14</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>15</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>16</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>17</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>18</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>19</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>20</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>21</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>22</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>23</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>24</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>25</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>26</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>27</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>28</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>29</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>30</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>31</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>32</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>33</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>34</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>35</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>36</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+			<key>37</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+				<key>fileRef</key>
+				<string>38</string>
+				<key>settings</key>
+				<dict/>
+			</dict>
+		</dict>
+		<key>PBXCopyFilesBuildPhase</key>
+		<dict/>
+		<key>PBXFileReference</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>path</key>
+				<string>ios-camera-app.xcodeproj</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>2</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>AppDelegate.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>4</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>SceneDelegate.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>6</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraViewController.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>8</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraMode.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>10</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>FilterPipeline.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>12</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>LUTManager.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>14</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>MetalFilterPipeline.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>16</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>FilmGrainView.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>18</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>WatermarkManager.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>20</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>StickerOverlayView.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>22</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/CameraModel.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>24</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/CameraScreen.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>26</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/Controls.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>28</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/DialRuler.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>30</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/Motion.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>32</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/Overlays.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>34</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/RealCameraEngine.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>36</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>CameraKit/Tokens.swift</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>38</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>explicitFileType</key>
+				<string>sourcecode.swift</string>
+				<key>path</key>
+				<string>Shaders.metal</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+		</dict>
+		<key>PBXFrameworksBuildPhase</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXFrameworksBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array/>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>PBXGroup</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>children</key>
+				<array>
+					<string>2</string>
+					<string>4</string>
+					<string>6</string>
+					<string>8</string>
+					<string>10</string>
+					<string>12</string>
+					<string>14</string>
+					<string>16</string>
+					<string>18</string>
+					<string>20</string>
+					<string>22</string>
+					<string>24</string>
+					<string>26</string>
+					<string>28</string>
+					<string>30</string>
+					<string>32</string>
+					<string>34</string>
+					<string>36</string>
+					<string>38</string>
+				</array>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+		</dict>
+		<key>PBXNativeTarget</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXNativeTarget</string>
+				<key>buildConfigurationList</key>
+				<string>2</string>
+				<key>buildPhases</key>
+				<array>
+					<string>3</string>
+					<string>4</string>
+				</array>
+				<key>buildRules</key>
+				<array/>
+				<key>dependencies</key>
+				<array/>
+				<key>name</key>
+				<string>ios-camera-app</string>
+				<key>productName</key>
+				<string>ios-camera-app</string>
+				<key>productReference</key>
+				<string>2</string>
+				<key>productType</key>
+				<string>com.apple.product-type.application</string>
+			</dict>
+		</dict>
+		<key>PBXProject</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXProject</string>
+				<key>attributes</key>
+				<dict>
+					<key>LastUpgradeCheck</key>
+					<integer>1500</integer>
+				</dict>
+				<key>buildConfigurationList</key>
+				<string>2</string>
+				<key>compatibilityVersion</key>
+				<string>Xcode 15.0</string>
+				<key>developmentRegion</key>
+				<string>en</string>
+				<key>hasScannedForEncodings</key>
+				<integer>0</string>
+				<key>knownRegions</key>
+				<array>
+					<string>en</string>
+				</array>
+				<key>mainGroup</key>
+				<string>1</string>
+				<key>productRefGroup</key>
+				<string>1</string>
+				<key>projectDirPath</key>
+				<string></string>
+				<key>projectRoot</key>
+				<string></string>
+				<key>targets</key>
+				<array>
+					<string>1</string>
+				</array>
+			</dict>
+		</dict>
+		<key>PBXResourcesBuildPhase</key>
+		<dict>
+			<key>4</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXResourcesBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array>
+					<string>37</string>
+				</array>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>PBXSourcesBuildPhase</key>
+		<dict>
+			<key>3</key>
+			<dict>
+				<key>isa</key>
+				<string>PBXSourcesBuildPhase</string>
+				<key>buildActionMask</key>
+				<integer>2147483647</integer>
+				<key>files</key>
+				<array>
+					<string>1</string>
+					<string>3</string>
+					<string>5</string>
+					<string>7</string>
+					<string>9</string>
+					<string>11</string>
+					<string>13</string>
+					<string>15</string>
+					<string>17</string>
+					<string>19</string>
+					<string>21</string>
+					<string>23</string>
+					<string>25</string>
+					<string>27</string>
+					<string>29</string>
+					<string>31</string>
+					<string>33</string>
+					<string>35</string>
+				</array>
+				<key>runOnlyForDeploymentPostprocessing</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+		<key>XCBuildConfiguration</key>
+		<dict>
+			<key>1</key>
+			<dict>
+				<key>isa</key>
+				<string>XCBuildConfiguration</string>
+				<key>baseConfigurationReference</key>
+				<string></string>
+				<key>buildSettings</key>
+				<dict>
+					<key>CLANG_ENABLE_OBJC_ARC</key>
+					<string>YES</string>
+					<key>CODE_SIGN_STYLE</key>
+					<string>Automatic</string>
+					<key>CURRENT_PROJECT_VERSION</key>
+					<string>1</string>
+					<key>DEBUG_INFORMATION_FORMAT</key>
+					<string>dwarf</string>
+					<key>GCC_NO_COMMON_BLOCKS</key>
+					<string>YES</string>
+					<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+					<array>
+						<string>DEBUG=1</string>
+						<string>$(inherited)</string>
+					</array>
+					<key>GENERATE_INFOPLIST_FILE</key>
+					<string>NO</string>
+					<key>INFOPLIST_FILE</key>
+					<string>Info.plist</string>
+					<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+					<string>17.0</string>
+					<key>MARKETING_VERSION</key>
+					<string>1.0</string>
+					<key>MTL_ENABLE_DEBUG_INFO</key>
+					<string>YES</string>
+					<key>MTL_FAST_MATH</key>
+					<string>YES</string>
+					<key>ONLY_ACTIVE_ARCH</key>
+					<string>YES</string>
+					<key>PRODUCT_BUNDLE_IDENTIFIER</key>
+					<string>com.yourcompany.ios-camera-app</string>
+					<key>PRODUCT_NAME</key>
+					<string>ios-camera-app</string>
+					<key>SUPPORTED_PLATFORMS</key>
+					<array>
+						<string>iphoneos</string>
+						<string>iphonesimulator</string>
+					</array>
+					<key>SWIFT_ACTIVE_COMPILATION_CONDITIONS</key>
+					<array>
+						<string>DEBUG</string>
+					</array>
+					<key>SWIFT_VERSION</key>
+					<string>5.0</string>
+					<key>TARGETED_DEVICE_FAMILY</key>
+					<array>
+						<string>1</string>
+						<string>2</string>
+					</array>
+					<key>VALIDATE_PRODUCT</key>
+					<string>YES</string>
+				</dict>
+				<key>name</key>
+				<string>Debug</string>
+			</dict>
+		</dict>
+		<key>XCConfigurationList</key>
+		<dict>
+			<key>2</key>
+			<dict>
+				<key>isa</key>
+				<string>XCConfigurationList</string>
+				<key>buildConfigurations</key>
+				<array>
+					<string>1</string>
+				</array>
+				<key>defaultConfigurationIsVisible</key>
+				<integer>0</string>
+				<key>defaultConfigurationName</key>
+				<string>Debug</string>
+			</dict>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>1</string>
+</dict>
+</plist>
