@@ -56,6 +56,9 @@ final class RealCameraEngine: NSObject, CameraEngine, AVCaptureVideoDataOutputSa
     /// Double exposure: first exposure stored for blending
     private var doubleExposureFirst: UIImage? = nil
 
+    /// Current device roll angle in degrees (for level indicator)
+    var levelDegrees: Double = 0.0
+
     // MARK: - LUT filter pipeline (from decompiled Android APKs)
 
     private let filterPipeline = FilterPipeline()

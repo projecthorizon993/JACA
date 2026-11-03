@@ -291,7 +291,11 @@ class CameraViewController: UIViewController {
             }
         }
 
-        // Wire capture format selector to CameraModel
+        // Wire level degrees from camera engine to model
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.screen.model.levelDegrees = self.cameraEngine.levelDegrees
+        }
         formatSegmentedControl.addTarget(self, action: #selector(formatChanged(_:)), for: .valueChanged)
 
         let hosting = UIHostingController(rootView: screen)

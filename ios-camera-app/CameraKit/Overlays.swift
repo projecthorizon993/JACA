@@ -19,15 +19,54 @@ struct GridOverlay: View {
         .accessibilityHidden(true)
     }
 
+    // MARK: - Level/Gradienter
+
+    /// Shows device roll angle (tilt left/right) as a level bubble.
+    /// Centered bubble indicates level horizon.
+    struct LevelOverlay: View {
+        var rollDegrees: Double = 0.0
+
+        var body: some View {
+            GeometryReader { g in
+                let centerX = g.size.width / 2
+                let centerY = g.size.height / 2
+                let maxOffset: CGFloat = 60
+
+                // Compute horizontal offset based on roll angle
+                let offset = CGFloat(rollDegrees) / 45.0 * maxOffset
+                let clampedOffset = max(-maxOffset, min(maxOffset, offset))
+
+                ZStack {
+                    // Level arc background
+                    Path { p in
+                        p.addArc(center: CGPoint(x: centerX, y: centerY), radius: 60, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
+                    }
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 2)
+
+                    // Level bubble
+                    Circle()
+                        .fill(levelColor(degrees: rollDegrees))
+                        .frame(width: 20, height: 20)
+                        .offset(x: clampedOffset, y: -centerY + 40)
+                }
+            }
+        }
+
+        private func levelColor(degrees: Double) -> Color {
+            if abs(degrees) < 2 {
+                return Color.green
+            } else if abs(degrees) < 10 {
+                return Color.yellow
+            } else {
+                return Color.red
+            }
+        }
+    }
+
     // MARK: - Face detection overlay
 
     /// Draws bounding boxes around detected faces in the viewfinder.
     struct FaceDetectionOverlay: View {
-        var faces: [CGRect]
-
-        var body: some View {
-            GeometryReader { g in
-                ForEach(Array(faces.enumerated()), id: \.offset) { index, rect in
                     // Convert Vision coordinates (origin bottom-left) to screen coordinates (origin top-left)
                     let box = CGRect(
                         x: rect.origin.x * g.size.width,
